@@ -1,6 +1,9 @@
 {{! Library root file template}}
 // This file is auto-generated. Do not modify!
+library krpc_dart;
+
+export 'src/krpc_dart_client.dart';
 
 {{# service_names}}
-export 'src/{{ name }}.dart';
+export 'src/services/{{filename}}.dart' show {{classname}};
 {{/ service_names}}

@@ -17,3 +17,35 @@ String toPascalCase(String input) {
 String toCamelCase(String input) {
   return ReCase(input).camelCase;
 }
+
+String toScreamingCase(String input) {
+  return ReCase(input).constantCase;
+}
+
+String parseDoc(String xmlDoc) {
+
+  var result = '';
+
+  var docRegexp = RegExp(r'<doc>([\S\s]+?)</doc>');
+  var docMatch = docRegexp.firstMatch(xmlDoc);
+  if (docMatch == null) {
+    return '/// ERROR PARSING DOCUMENTATION BLOC';
+  }
+  var docString = docMatch.group(1);
+
+  var summaryRegexp = RegExp(r'<summary>([\S\s]+?)</summary>');
+  var summaryMatch = summaryRegexp.firstMatch(docString);
+  if (summaryMatch == null) {
+    return '/// ERROR PARSING DOCUMENTATION BLOC';
+  }
+  var summaryString = summaryMatch.group(1).trim();
+  var summaryStrings = summaryString.split(RegExp(r'[\n|\r|\r\n]'));
+  summaryStrings.forEach((string) {
+    string.trim();
+    result += '\n/// ' + string;
+  });
+
+  //todo: <remarks>
+
+  return result;
+}

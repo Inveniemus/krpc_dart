@@ -1,5 +1,43 @@
 {{! Services template}}
+import 'dart:typed_data';
 
-class {{name}} {
+{{{documentation}}}
+class {{service_name}} {
+
+  // Service procedures
+  {{#service_procedures}}
+  {{{return_type}}} {{name}}({{#parameters}}{{{type}}} {{name}}{{#comma}}, {{/comma}}{{/parameters}}) {}
+
+  {{/service_procedures}}
+
+  // Service getters
+
+  // Service setters
 
 }
+
+{{#classes}}
+{{{documentation}}}
+class {{class_name}} {
+  // Class methods
+  {{#class_methods}}
+  {{name}} {{class}}
+  {{/class_methods}}
+
+  // Class static methods
+
+  // Class getters
+
+  // Class setters
+}
+{{/classes}}
+
+{{#enumerations}}
+{{{documentation}}}
+enum {{enumeration_name}} {
+  // Values
+  {{#enumeration_values}}
+  {{enumeration_value}},
+  {{/enumeration_values}}
+}
+{{/enumerations}}

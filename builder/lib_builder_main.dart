@@ -2,14 +2,13 @@
 /// by kRPC. It requires an RPC connection to KSP.
 
 import 'package:web_socket_channel/io.dart';
-import 'package:mustache_template/mustache_template.dart';
 import 'dart:io';
 import 'dart:async';
 
 import 'codecs/decode_messages.dart';
 import 'codecs/encoded_messages.dart';
-import 'functions/lib_root_builder.dart';
-import 'functions/service_builder.dart';
+import 'lib_root_builder.dart';
+import 'service_builder.dart';
 import 'utils/string_utils.dart';
 
 void main() async {
@@ -89,11 +88,15 @@ void main() async {
   // Build the library root
   var data = {'service_names': []};
   services.forEach((service) => data['service_names']
-      .add({'name': toSnakeCase(service.name)}));
+      .add({'filename': toSnakeCase(service.name), 'classname': toPascalCase(service.name)}));
   buildLibRoot(data);
 
   // Build the Services
-  services.forEach((service) => buildService(service));
+  //services.forEach((service) => buildService(service));
+  services.forEach((service) {
+    var builder = ServiceBuilder(service);
+    builder.run();
+  });
 
   exit(0);
 }

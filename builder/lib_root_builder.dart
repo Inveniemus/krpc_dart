@@ -8,8 +8,8 @@ void buildLibRoot(Map<String, dynamic> data) {
     File('builder/templates/lib_root.html').readAsStringSync()
   );
 
-  File('out/lib/krpc_dart.dart').createSync(recursive: true);
-  var file = File('out/lib/krpc_dart.dart');
+  File('lib/krpc_dart.dart').createSync(recursive: true);
+  var file = File('lib/krpc_dart.dart');
   file.writeAsStringSync('');
 
   file.writeAsStringSync(
