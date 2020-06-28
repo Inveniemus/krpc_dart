@@ -6,7 +6,8 @@ class {{service_name}} {
 
   // Service procedures
   {{#service_procedures}}
-  {{{return_type}}} {{name}}({{#parameters}}{{{type}}} {{name}}{{#comma}}, {{/comma}}{{/parameters}}) {}
+  {{{documentation}}}
+  {{{return_type}}} {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) {}
 
   {{/service_procedures}}
 
@@ -41,3 +42,8 @@ enum {{enumeration_name}} {
   {{/enumeration_values}}
 }
 {{/enumerations}}
+
+{{#exceptions}}
+{{{documentation}}}
+class {{exception_name}} {}
+{{/exceptions}}
