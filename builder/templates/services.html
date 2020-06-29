@@ -12,24 +12,55 @@ class {{service_name}} {
   {{/service_procedures}}
 
   // Service getters
+  {{#service_getters}}
+  {{{documentation}}}
+  {{{return_type}}} get {{procedure_name}} {}
+
+  {{/service_getters}}
 
   // Service setters
+  {{#service_setters}}
+  {{{documentation}}}
+  void set {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) {}
+
+  {{/service_setters}}
 
 }
 
 {{#classes}}
 {{{documentation}}}
 class {{class_name}} {
+
+  // Reference of instance
+  Uint8List _value;
+
   // Class methods
   {{#class_methods}}
-  {{name}} {{class}}
+  {{{documentation}}}
+  {{{return_type}}} {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) {}
+
   {{/class_methods}}
 
   // Class static methods
+  {{#class_static_methods}}
+  {{{documentation}}}
+  static {{{return_type}}} {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) {}
+
+  {{/class_static_methods}}
 
   // Class getters
+  {{#class_getters}}
+  {{{documentation}}}
+  {{{return_type}}} get {{procedure_name}} {}
+
+  {{/class_getters}}
 
   // Class setters
+  {{#class_setters}}
+  {{{documentation}}}
+  void set {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) {}
+
+  {{/class_setters}}
 }
 {{/classes}}
 

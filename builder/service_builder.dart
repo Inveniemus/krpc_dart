@@ -52,7 +52,8 @@ class ServiceBuilder {
         'documentation': '',
       };
 
-      var className = toPascalCase(element.name);
+      // todo: confirm we don't use toPascalCase, cause RCS and SAS classes
+      var className = element.name;
       classData['class_name'] = className;
       classData['documentation'] = parseDoc(element.documentation);
       data['classes'].add(classData);
@@ -88,6 +89,8 @@ class ServiceBuilder {
 
   void _buildProcedures() {
     var filteredProcedures = _parseProcedures(_service.procedures);
+
+    // Service procedures which are Service class methods
     var serviceProcedures = filteredProcedures['service_procedures'];
     serviceProcedures.forEach((procedureData) {
       procedureData['procedure_name'] =
@@ -99,6 +102,92 @@ class ServiceBuilder {
       procedureData['raw_doc'] = procedure.documentation;
     });
     data['service_procedures'] = serviceProcedures;
+
+    // Service class getters
+    var serviceGetters = filteredProcedures['service_getters'];
+    serviceGetters.forEach((procedureData) {
+      procedureData['procedure_name'] =
+          toCamelCase(procedureData['procedure_name']);
+      Procedure procedure = procedureData['procedure'];
+      procedureData['return_type'] = convert(procedure.returnType);
+      procedureData['documentation'] = parseDoc(procedure.documentation);
+      procedureData['raw_doc'] = procedure.documentation;
+    });
+    data['service_getters'] = serviceGetters;
+
+    // Service class setters
+    var serviceSetters = filteredProcedures['service_setters'];
+    serviceSetters.forEach((procedureData) {
+      procedureData['procedure_name'] =
+          toCamelCase(procedureData['procedure_name']);
+      Procedure procedure = procedureData['procedure'];
+      procedureData['parameters'] = _buildParameters(procedure.parameters);
+      procedureData['documentation'] = parseDoc(procedure.documentation);
+      procedureData['raw_doc'] = procedure.documentation;
+    });
+    data['service_setters'] = serviceSetters;
+
+    // Class methods
+    var classMethods = filteredProcedures['class_methods'];
+    classMethods.forEach((procedureData) {
+      procedureData['procedure_name'] =
+          toCamelCase(procedureData['procedure_name']);
+      Procedure procedure = procedureData['procedure'];
+      procedureData['return_type'] = convert(procedure.returnType);
+      procedureData['parameters'] = _buildParameters(procedure.parameters);
+      procedureData['documentation'] = parseDoc(procedure.documentation);
+      procedureData['raw_doc'] = procedure.documentation;
+
+      var classData = data['classes'].firstWhere((classData) =>
+        classData['class_name'] == procedureData['class_name']);
+      classData['class_methods'].add(procedureData);
+    });
+
+    // Class static methods
+    var staticClassMethods = filteredProcedures['class_static_methods'];
+    staticClassMethods.forEach((procedureData) {
+      procedureData['procedure_name'] =
+          toCamelCase(procedureData['procedure_name']);
+      Procedure procedure = procedureData['procedure'];
+      procedureData['return_type'] = convert(procedure.returnType);
+      procedureData['parameters'] = _buildParameters(procedure.parameters);
+      procedureData['documentation'] = parseDoc(procedure.documentation);
+      procedureData['raw_doc'] = procedure.documentation;
+
+      var classData = data['classes'].firstWhere((classData) =>
+      classData['class_name'] == procedureData['class_name']);
+      classData['class_static_methods'].add(procedureData);
+    });
+
+    // Class getters
+    var gettersMethods = filteredProcedures['class_getters'];
+    gettersMethods.forEach((procedureData) {
+      procedureData['procedure_name'] =
+          toCamelCase(procedureData['procedure_name']);
+      Procedure procedure = procedureData['procedure'];
+      procedureData['return_type'] = convert(procedure.returnType);
+      procedureData['documentation'] = parseDoc(procedure.documentation);
+      procedureData['raw_doc'] = procedure.documentation;
+      
+      var classData = data['classes'].firstWhere((classData) =>
+      classData['class_name'] == procedureData['class_name']);
+      classData['class_getters'].add(procedureData);
+    });
+    
+    // Class setters
+    var settersMethods = filteredProcedures['class_setters'];
+    settersMethods.forEach((procedureData) {
+      procedureData['procedure_name'] =
+          toCamelCase(procedureData['procedure_name']);
+      Procedure procedure = procedureData['procedure'];
+      procedureData['parameters'] = _buildParameters(procedure.parameters);
+      procedureData['documentation'] = parseDoc(procedure.documentation);
+      procedureData['raw_doc'] = procedure.documentation;
+
+      var classData = data['classes'].firstWhere((classData) =>
+      classData['class_name'] == procedureData['class_name']);
+      classData['class_setters'].add(procedureData);
+    });
   }
 
   static Map<String, dynamic> _parseProcedures(List<Procedure> procedures) {
@@ -126,40 +215,33 @@ class ServiceBuilder {
     procedures.forEach((procedure) {
 
       if (serviceProcedureRE.hasMatch(procedure.name)) {
-        print('  ${procedure.name}');
         result['service_procedures'].add({'procedure': procedure, 'procedure_name': procedure.name});
 
       } else if (serviceGetterProcedureRE.hasMatch(procedure.name)) {
         var match = serviceGetterProcedureRE.firstMatch(procedure.name);
-        print('  ${match.group(1)} [get]');
         result['service_getters'].add({'procedure': procedure, 'procedure_name': match.group(1)});
 
       } else if (serviceSetterProcedureRE.hasMatch(procedure.name)) {
         var match = serviceSetterProcedureRE.firstMatch(procedure.name);
-        print('  ${match.group(1)} [set]');
         result['service_setters'].add({'procedure': procedure, 'procedure_name': match.group(1)});
 
       } else if (classMethodProcedureRE.hasMatch(procedure.name)) {
         var match = classMethodProcedureRE.firstMatch(procedure.name);
-        print('  ${match.group(1)} - ${match.group(2)}');
         result['class_methods']
             .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
 
       } else if (classStaticMethodProcedureRE.hasMatch(procedure.name)) {
         var match = classStaticMethodProcedureRE.firstMatch(procedure.name);
-        print('  ${match.group(1)} - ${match.group(2)} [static]');
         result['class_static_methods']
             .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
 
       } else if (classGetterMethodProcedureRE.hasMatch(procedure.name)) {
         var match = classGetterMethodProcedureRE.firstMatch(procedure.name);
-        print('  ${match.group(1)} - ${match.group(2)} [get]');
         result['class_getters']
             .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
 
       } else if (classSetterMethodProcedureRE.hasMatch(procedure.name)) {
         var match = classSetterMethodProcedureRE.firstMatch(procedure.name);
-        print('  ${match.group(1)} - ${match.group(2)} [set]');
         result['class_setters']
             .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
       }
@@ -178,6 +260,8 @@ class ServiceBuilder {
       });
     });
     result.isNotEmpty ? result.last['comma'] = false : null;
+    // Remove the "this" parameters, useless in Dart context
+    result.removeWhere((data) => data['parameter_name'] == 'this');
     return result;
   }
 }
