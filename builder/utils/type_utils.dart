@@ -1,6 +1,6 @@
 /// This file provide type related conversion from kRPC types to Dart types.
 
-import '../proto/krpc.pb.dart' show Type, Type_TypeCode;
+import '../proto/krpc.pb.dart' show Type;
 
 String convert(Type type) {
   switch(type.code.name) {
@@ -40,10 +40,10 @@ String convert(Type type) {
 
       // todo: the following 4 to be investigated
     case 'PROCEDURE_CALL':
-      return 'dynamic';
+      return 'Function';
       break;
     case 'STREAM':
-      return 'dynamic';
+      return 'Stream';
       break;
     case 'STATUS':
       return 'dynamic';

@@ -88,7 +88,7 @@ void main() async {
   // Build the library root
   var data = {'service_names': []};
   services.forEach((service) => data['service_names']
-      .add({'filename': toSnakeCase(service.name), 'classname': toPascalCase(service.name)}));
+      .add({'filename': toSnakeCase(service.name), 'classname': service.name}));
   buildLibRoot(data);
 
   // Build the Services

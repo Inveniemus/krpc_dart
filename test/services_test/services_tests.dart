@@ -8,6 +8,6 @@ import 'package:krpc_dart/krpc_dart.dart';
 void main() {
   test('Services are imported', () {
     var spaceCenter = SpaceCenter();
-    var vessel = Vessel();
+    var vessel = Vessel(Uint8List(5)); // not the usual way to build it!
   });
 }

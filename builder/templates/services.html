@@ -1,8 +1,13 @@
 {{! Services template}}
 import 'dart:typed_data';
+import '../krpc_dart_client.dart';
 
 {{{documentation}}}
 class {{service_name}} {
+
+  // Client reference
+  final Client _client;
+  {{service_name}}(this._client);
 
   // Service procedures
   {{#service_procedures}}
@@ -31,8 +36,13 @@ class {{service_name}} {
 {{{documentation}}}
 class {{class_name}} {
 
+  // Client reference
+  final Client _client;
+
   // Reference of instance
-  Uint8List _value;
+  final Uint8List _value;
+  // Constructor
+  {{class_name}}(this._client, this._value);
 
   // Class methods
   {{#class_methods}}

@@ -29,7 +29,7 @@ class ServiceBuilder {
   }
 
   void run() {
-    data['service_name'] = toPascalCase(_service.name);
+    data['service_name'] = _service.name;
     data['documentation'] = parseDoc(_service.documentation);
 
     _buildClasses();
