@@ -1,8 +1,8 @@
+import 'dart:convert';
 import 'dart:io' show File;
 import 'package:mustache_template/mustache_template.dart';
-import 'proto/krpc.pb.dart' show Service, Procedure, Parameter;
+import 'proto/krpc.pb.dart' show Service, Procedure, Parameter, Type;
 import 'utils/string_utils.dart';
-import 'utils/type_utils.dart';
 
 /// This class builds a Service. It provides a [Map<String, dynamic>] of its
 /// service [data], and write a library file [outFile].
@@ -14,6 +14,7 @@ class ServiceBuilder {
 
   File outFile;
   Map<String, dynamic> data = {
+    'library_name': '',
     'service_name': '',
     'service_procedures': [],
     'classes': [],
@@ -29,6 +30,7 @@ class ServiceBuilder {
   }
 
   void run() {
+    data['library_name'] = toSnakeCase(_service.name);
     data['service_name'] = _service.name;
     data['documentation'] = parseDoc(_service.documentation);
 
@@ -90,102 +92,127 @@ class ServiceBuilder {
   void _buildProcedures() {
     var filteredProcedures = _parseProcedures(_service.procedures);
 
+    // For all procedures
+    filteredProcedures.forEach((key, value) {
+      var procedureList = filteredProcedures[key];
+      procedureList.forEach((procedureData) {
+        Procedure procedure = procedureData['procedure'];
+        procedureData['procedure_name'] =
+            toCamelCase(procedureData['procedure_name']);
+        procedureData['documentation'] = parseDoc(procedure.documentation);
+        procedureData['raw_doc'] = procedure.documentation;
+        procedureData['request_data'] = {
+          'service': _service.name,
+          'procedure': procedure.name,
+          'return_type': procedure.returnType.code.name,
+        };
+      });
+    });
+
     // Service procedures which are Service class methods
     var serviceProcedures = filteredProcedures['service_procedures'];
     serviceProcedures.forEach((procedureData) {
-      procedureData['procedure_name'] =
-          toCamelCase(procedureData['procedure_name']);
       Procedure procedure = procedureData['procedure'];
-      procedureData['return_type'] = convert(procedure.returnType);
+      var returnType = _convert(procedure.returnType);
+      procedureData['return_type'] = returnType;
+      procedureData['request_data']['return_type_name'] = returnType;
+      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
+          .replaceAll('"', "'");
+      returnType == 'void'
+          ? procedureData['has_return'] = false
+          : procedureData['has_return'] = true;
       procedureData['parameters'] = _buildParameters(procedure.parameters);
-      procedureData['documentation'] = parseDoc(procedure.documentation);
-      procedureData['raw_doc'] = procedure.documentation;
     });
     data['service_procedures'] = serviceProcedures;
 
     // Service class getters
     var serviceGetters = filteredProcedures['service_getters'];
     serviceGetters.forEach((procedureData) {
-      procedureData['procedure_name'] =
-          toCamelCase(procedureData['procedure_name']);
       Procedure procedure = procedureData['procedure'];
-      procedureData['return_type'] = convert(procedure.returnType);
-      procedureData['documentation'] = parseDoc(procedure.documentation);
-      procedureData['raw_doc'] = procedure.documentation;
+      var returnType = _convert(procedure.returnType);
+      procedureData['return_type'] = returnType;
+      procedureData['request_data']['return_type_name'] = returnType;
+      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
+          .replaceAll('"', "'");
+      returnType == 'void'
+          ? procedureData['has_return'] = false
+          : procedureData['has_return'] = true;
     });
     data['service_getters'] = serviceGetters;
 
     // Service class setters
     var serviceSetters = filteredProcedures['service_setters'];
     serviceSetters.forEach((procedureData) {
-      procedureData['procedure_name'] =
-          toCamelCase(procedureData['procedure_name']);
       Procedure procedure = procedureData['procedure'];
       procedureData['parameters'] = _buildParameters(procedure.parameters);
-      procedureData['documentation'] = parseDoc(procedure.documentation);
-      procedureData['raw_doc'] = procedure.documentation;
     });
     data['service_setters'] = serviceSetters;
 
     // Class methods
     var classMethods = filteredProcedures['class_methods'];
     classMethods.forEach((procedureData) {
-      procedureData['procedure_name'] =
-          toCamelCase(procedureData['procedure_name']);
       Procedure procedure = procedureData['procedure'];
-      procedureData['return_type'] = convert(procedure.returnType);
+      var returnType = _convert(procedure.returnType);
+      procedureData['return_type'] = returnType;
+      procedureData['request_data']['return_type_name'] = returnType;
+      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
+          .replaceAll('"', "'");
+      returnType == 'void'
+          ? procedureData['has_return'] = false
+          : procedureData['has_return'] = true;
       procedureData['parameters'] = _buildParameters(procedure.parameters);
-      procedureData['documentation'] = parseDoc(procedure.documentation);
-      procedureData['raw_doc'] = procedure.documentation;
 
       var classData = data['classes'].firstWhere((classData) =>
-        classData['class_name'] == procedureData['class_name']);
+          classData['class_name'] == procedureData['class_name']);
       classData['class_methods'].add(procedureData);
     });
 
     // Class static methods
     var staticClassMethods = filteredProcedures['class_static_methods'];
     staticClassMethods.forEach((procedureData) {
-      procedureData['procedure_name'] =
-          toCamelCase(procedureData['procedure_name']);
       Procedure procedure = procedureData['procedure'];
-      procedureData['return_type'] = convert(procedure.returnType);
+      var returnType = _convert(procedure.returnType);
+      procedureData['return_type'] = returnType;
+      procedureData['request_data']['return_type_name'] = returnType;
+      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
+          .replaceAll('"', "'");
+      returnType == 'void'
+          ? procedureData['has_return'] = false
+          : procedureData['has_return'] = true;
       procedureData['parameters'] = _buildParameters(procedure.parameters);
-      procedureData['documentation'] = parseDoc(procedure.documentation);
-      procedureData['raw_doc'] = procedure.documentation;
 
       var classData = data['classes'].firstWhere((classData) =>
-      classData['class_name'] == procedureData['class_name']);
+          classData['class_name'] == procedureData['class_name']);
       classData['class_static_methods'].add(procedureData);
     });
 
     // Class getters
     var gettersMethods = filteredProcedures['class_getters'];
     gettersMethods.forEach((procedureData) {
-      procedureData['procedure_name'] =
-          toCamelCase(procedureData['procedure_name']);
       Procedure procedure = procedureData['procedure'];
-      procedureData['return_type'] = convert(procedure.returnType);
-      procedureData['documentation'] = parseDoc(procedure.documentation);
-      procedureData['raw_doc'] = procedure.documentation;
-      
+      var returnType = _convert(procedure.returnType);
+      procedureData['return_type'] = returnType;
+      procedureData['request_data']['return_type_name'] = returnType;
+      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
+          .replaceAll('"', "'");
+      returnType == 'void'
+          ? procedureData['has_return'] = false
+          : procedureData['has_return'] = true;
+
       var classData = data['classes'].firstWhere((classData) =>
-      classData['class_name'] == procedureData['class_name']);
+          classData['class_name'] == procedureData['class_name']);
       classData['class_getters'].add(procedureData);
     });
     
     // Class setters
     var settersMethods = filteredProcedures['class_setters'];
     settersMethods.forEach((procedureData) {
-      procedureData['procedure_name'] =
-          toCamelCase(procedureData['procedure_name']);
       Procedure procedure = procedureData['procedure'];
       procedureData['parameters'] = _buildParameters(procedure.parameters);
-      procedureData['documentation'] = parseDoc(procedure.documentation);
-      procedureData['raw_doc'] = procedure.documentation;
+
 
       var classData = data['classes'].firstWhere((classData) =>
-      classData['class_name'] == procedureData['class_name']);
+          classData['class_name'] == procedureData['class_name']);
       classData['class_setters'].add(procedureData);
     });
   }
@@ -254,7 +281,7 @@ class ServiceBuilder {
     parameters.forEach((parameter) {
       result.add({
         'parameter_name': toCamelCase(parameter.name),
-        'parameter_type': convert(parameter.type),
+        'parameter_type': _convert(parameter.type),
         'parameter_default_value': parameter.defaultValue.toString(),
         'comma': true,
       });
@@ -263,6 +290,75 @@ class ServiceBuilder {
     // Remove the "this" parameters, useless in Dart context
     result.removeWhere((data) => data['parameter_name'] == 'this');
     return result;
+  }
+
+  static String _convert(Type type) {
+    switch(type.code.name) {
+      case 'DOUBLE':
+        return 'double';
+        break;
+      case 'FLOAT':
+        return 'double';
+        break;
+      case 'SINT32':
+        return 'int';
+        break;
+      case 'SINT64':
+        return 'Int64';
+        break;
+      case 'UINT32':
+        return 'int';
+        break;
+      case 'UINT64':
+        return 'Int64';
+        break;
+      case 'BOOL':
+        return 'bool';
+        break;
+      case 'STRING':
+        return 'String';
+        break;
+      case 'BYTES':
+        return 'Uint8List';
+        break;
+      case 'CLASS':
+        return type.name;
+        break;
+      case 'ENUMERATION':
+        return type.name;
+        break;
+
+    // todo: the following 4 to be investigated
+      case 'PROCEDURE_CALL':
+        return 'Function';
+        break;
+      case 'STREAM':
+        return 'Stream';
+        break;
+      case 'STATUS':
+        return 'dynamic';
+        break;
+      case 'SERVICES':
+        return 'dynamic';
+        break;
+
+    // todo: to be confirmed
+      case 'TUPLE':
+        return 'List<dynamic>';
+        break;
+      case 'LIST':
+        return 'List<dynamic>';
+        break;
+      case 'SET':
+        return 'List<dynamic>';
+        break;
+      case 'DICTIONARY':
+        return 'Map<String, dynamic>';
+        break;
+
+      default:
+        return 'void';
+    }
   }
 }
 

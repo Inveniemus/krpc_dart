@@ -85,18 +85,18 @@ void main() async {
   var services = servicesHolder.services;
   print(services.length.toString() + ' services found.');
 
-  // Build the library root
-  var data = {'service_names': []};
-  services.forEach((service) => data['service_names']
-      .add({'filename': toSnakeCase(service.name), 'classname': service.name}));
-  buildLibRoot(data);
-
   // Build the Services
   //services.forEach((service) => buildService(service));
+  var data = {'service_names': []};
   services.forEach((service) {
-    var builder = ServiceBuilder(service);
-    builder.run();
+    if (service.name == 'KRPC' || service.name == 'SpaceCenter') {
+      data['service_names'].add(
+          {'filename': toSnakeCase(service.name), 'classname': service.name});
+      var builder = ServiceBuilder(service);
+      builder.run();
+    }
   });
+  buildLibRoot(data);
 
   exit(0);
 }

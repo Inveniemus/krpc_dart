@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:krpc_dart/exceptions.dart';
 import 'package:krpc_dart/krpc_dart.dart';
-import 'package:krpc_dart/proto/krpc.pb.dart';
+import 'package:krpc_dart/proto/krpc.pb.dart' show Response, Request, Type, Type_TypeCode;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -12,6 +14,7 @@ enum CONNECTION_STATUS {
   CONNECTED,
   DISCONNECTED,
   ERROR,
+  WAITING,
 }
 
 /// This class manages the kRPC connection and provides interfaces to kRPC
@@ -24,6 +27,8 @@ class Client {
   WebSocketChannel _streamChannel;
 
   StreamController<CONNECTION_STATUS> state;
+
+  Stream<dynamic> rpcStream;
 
   // Services
   // todo: make it with builder
@@ -44,14 +49,25 @@ class Client {
       int rpcPort = 50000,
       int streamPort = 50001,
       String name = 'dart-krpc'}) async {
-    var wsAddress =
+
+    var wsRpcAddress =
         'ws://' + ipAddress + ':' + rpcPort.toString() + '/?name=' + name;
-    print('WebSocket address: ' + wsAddress);
-    _rpcChannel = IOWebSocketChannel.connect(wsAddress);
+    print('WebSocket address: ' + wsRpcAddress);
+    _rpcChannel = IOWebSocketChannel.connect(wsRpcAddress);
+    rpcStream = _rpcChannel.stream.asBroadcastStream();
+
+    try {
+      var clientId = base64Encode(await krpc.getClientID());
+      var wsStreamAddress = 'ws://' + ipAddress + ':' + streamPort.toString() +
+          '/?id=' + clientId;
+      _streamChannel = IOWebSocketChannel.connect(wsStreamAddress);
+    } on WebSocketChannelException {
+      throw ConnectionKrpcDartException('Connection error. Check IP and PORT!');
+    }
   }
 
-  /// Sends an RPC request to kRPC server and wait for an answer if applicable.
-  /// [dataCalls] should be:
+  /// Sends a single RPC request to kRPC server and wait for an answer if applicable.
+  /// [callData] should be:
   /// {'service': <service name, as string>,
   ///  'procedure': <procedure name, as string>,
   ///  'serviceId': <service id, as int>,
@@ -61,23 +77,28 @@ class Client {
   ///     'value': <value, as any type it may have>,
   ///  ],
   /// }
-  Future<dynamic> request(
-      {List<Map<String, dynamic>> dataCalls}
+  Future<dynamic> singleRequest(
+      Map<String, dynamic> callData
       ) async {
-    _rpcChannel.sink.add(Coder.encodeRequest(dataCalls));
-    _rpcChannel.stream.listen((data) {
-      if (data is Uint8List) {
-        state.add(CONNECTION_STATUS.CONNECTED);
-        var response = Response.fromBuffer(data);
-        print(response.writeToJsonMap());
-        return null;
-      } // Normal connection
-    }, onError: (error) {
+    // 1. Encode and send the Request
+    state.add(CONNECTION_STATUS.WAITING);
+    _rpcChannel.sink.add(Coder.encodeSingleRequest(callData));
+
+    var returnType = callData['return_type'] ?? 'BYTES';
+    var returnTypeName = callData['return_type_name'];
+
+    // 2. Listen to the channel for a Response
+    try {
+      Uint8List data = await rpcStream.first;
+      state.add(CONNECTION_STATUS.CONNECTED);
+      var response = Response.fromBuffer(data);
+      if (returnType == 'ENUMERATION' || returnType == 'CLASS') {
+        return Coder.decodeSingleResponse(response, returnType, returnTypeName);
+      }
+      return Coder.decodeSingleResponse(response, returnType);
+    } catch (error) {
       state.add(CONNECTION_STATUS.ERROR);
-      return null;
-    }, onDone: () {
-      state.add(CONNECTION_STATUS.DISCONNECTED);
-      return null;
-    });
+      rethrow;
+    }
   }
 }
