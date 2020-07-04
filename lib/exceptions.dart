@@ -5,4 +5,9 @@ abstract class KrpcDartException implements Exception {
 
 class ConnectionKrpcDartException extends KrpcDartException {
   ConnectionKrpcDartException(message) : super(message);
+
+  @override
+  String toString() {
+    return 'ConnectionKrpcDartException: ' + message;
+  }
 }

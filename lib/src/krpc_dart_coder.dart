@@ -54,7 +54,9 @@ class Coder {
     return request.writeToBuffer();
   }
 
-  static dynamic decodeSingleResponse(Response response, String typeCode, [String typeName]) {
+  static dynamic decodeSingleResponse(
+      Response response, String typeCode,
+      [String typeName, String serviceNameSnakeCase]) {
     print('decoding...');
     if (response.error.name != '') {
       print(response.error.description);
@@ -65,20 +67,28 @@ class Coder {
       print(response.error.description);
       return null; // todo: Exception
     }
-    var valueDecoded = _valueDecoder(result.value, typeCode, typeName);
+    var valueDecoded = _valueDecoder(
+        Uint8List.fromList(result.value), typeCode, typeName, serviceNameSnakeCase);
     print(valueDecoded);
     return valueDecoded;
   }
 
-  static dynamic _valueDecoder(Uint8List value, String typeCode, [String typeName]) {
+  static dynamic _valueDecoder(
+      Uint8List value, String typeCode,
+      [String typeName, String serviceNameSnakeCase]) {
 
     print('Value decoder:\nValue (raw): ${value}\nType: ${typeCode}');
+
+    // When krpc cannot find requested stuff, value will be an empty list
+    if (value.isEmpty) return null;
+
     var reader = CodedBufferReader(value);
 
-    var mirrorSystem = currentMirrorSystem();
-    var krpcLibraryMirror = mirrorSystem.findLibrary(Symbol('krpc'));
-    var spaceCenterLibraryMirror = mirrorSystem.findLibrary(Symbol('space_center'));
-    print(krpcLibraryMirror.declarations);
+    var library;
+    if (serviceNameSnakeCase != null) {
+      var librarySymbol = Symbol(serviceNameSnakeCase);
+      library = currentMirrorSystem().findLibrary(librarySymbol);
+    }
 
     switch(typeCode) {
       case 'NONE':
@@ -104,11 +114,15 @@ class Coder {
       case 'CLASS':
         print('${typeCode} name: ${typeName}');
         var classSymbol = MirrorSystem.getSymbol(typeName);
-        ClassMirror classMirror = krpcLibraryMirror.declarations[classSymbol];
-        classMirror = spaceCenterLibraryMirror.declarations[classSymbol];
+        ClassMirror classMirror = library.declarations[classSymbol];
         return classMirror.newInstance(Symbol(''), [null, value], {}).reflectee;
       case 'ENUMERATION':
-        return;
+        print('${typeCode} name: ${typeName}');
+        var classSymbol = MirrorSystem.getSymbol(typeName);
+        ClassMirror classMirror = library.declarations[classSymbol];
+        var indexNumber = reader.readEnum() ~/ 2; // Divided by 2 for whatever reason, I don't know why.
+        var symbolName = classMirror.declarations.keys.elementAt(indexNumber + 3); // Very dirty.
+        return classMirror.getField(symbolName).reflectee;
 
     // todo: the following 4 to be investigated
       case 'PROCEDURE_CALL':

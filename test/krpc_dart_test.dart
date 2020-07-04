@@ -9,7 +9,6 @@ void main() async {
       var client = Client();
       client.state.stream.listen((event) => print(event.toString()));
       await client.connect(ipAddress: '192.168.100.151');
-      await client.rpc.stream.last;
     });
   });
 }

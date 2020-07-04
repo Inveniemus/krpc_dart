@@ -86,6 +86,7 @@ class Client {
 
     var returnType = callData['return_type'] ?? 'BYTES';
     var returnTypeName = callData['return_type_name'];
+    var serviceNameSnakeCase = callData['service_name_snake'];
 
     // 2. Listen to the channel for a Response
     try {
@@ -93,7 +94,8 @@ class Client {
       state.add(CONNECTION_STATUS.CONNECTED);
       var response = Response.fromBuffer(data);
       if (returnType == 'ENUMERATION' || returnType == 'CLASS') {
-        return Coder.decodeSingleResponse(response, returnType, returnTypeName);
+        return Coder.decodeSingleResponse(
+            response, returnType, returnTypeName, serviceNameSnakeCase);
       }
       return Coder.decodeSingleResponse(response, returnType);
     } catch (error) {

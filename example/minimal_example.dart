@@ -10,7 +10,7 @@ void main() async {
   try {
     await client.connect(ipAddress: '192.168.100.33', rpcPort: 50000);
   } on ConnectionKrpcDartException catch(e) {
-    print('Connection error: ' + e.toString());
+    print('Connection error: ' + e.message.toString());
     exit(-1);
   }
 

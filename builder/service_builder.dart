@@ -103,6 +103,7 @@ class ServiceBuilder {
         procedureData['raw_doc'] = procedure.documentation;
         procedureData['request_data'] = {
           'service': _service.name,
+          'service_name_snake': toSnakeCase(_service.name),
           'procedure': procedure.name,
           'return_type': procedure.returnType.code.name,
         };
