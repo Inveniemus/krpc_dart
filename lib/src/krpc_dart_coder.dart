@@ -6,7 +6,6 @@ import 'package:krpc_dart/proto/krpc.pb.dart'
 import 'package:protobuf/protobuf.dart';
 
 class Coder {
-
   /// Request encoder from [dataList] map that should follow the following
   /// structure, derived from the protobuf Request message structure:
   /// {'service': <service name, as string>,
@@ -19,7 +18,6 @@ class Coder {
   ///  ],
   /// }
   static Uint8List encodeSingleRequest(Map<String, dynamic> data) {
-    print('encoding...');
     var request = Request();
     var call = ProcedureCall();
     request.calls.add(call);
@@ -47,17 +45,15 @@ class Coder {
       arguments.forEach((argumentData) {
         var argument = Argument();
         argument.position = argumentData['position'];
-        argument.value = argumentData['value'];
+        _setArgumentValue(argument, argumentData);
       });
     }
-
     return request.writeToBuffer();
   }
 
   static dynamic decodeSingleResponse(
       Response response, String typeCode,
       [String typeName, String serviceNameSnakeCase]) {
-    print('decoding...');
     if (response.error.name != '') {
       print(response.error.description);
       return null; // todo: Exception
@@ -149,6 +145,13 @@ class Coder {
     }
   }
 
+  static void _setArgumentValue(Argument argument, Map<String, dynamic> data) {
+    var value = data['argument_value'];
+    switch (data['argument_type']) {
+      case 'BOOL':
+        argument.$_setBool(2, value);
+    }
+  }
 
   static Uint8List ClientIDRequest() {
     var request = Request();

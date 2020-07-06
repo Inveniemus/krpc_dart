@@ -98,5 +98,7 @@ void main() async {
   });
   buildLibRoot(data);
 
+  print('Finished!');
+
   exit(0);
 }

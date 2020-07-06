@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' show File;
 import 'package:mustache_template/mustache_template.dart';
+import 'handlers/type_handler.dart';
 import 'proto/krpc.pb.dart' show Service, Procedure, Parameter, Type;
 import 'utils/string_utils.dart';
 
@@ -146,6 +147,8 @@ class ServiceBuilder {
     serviceSetters.forEach((procedureData) {
       Procedure procedure = procedureData['procedure'];
       procedureData['parameters'] = _buildParameters(procedure.parameters);
+      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
+          .replaceAll('"', "'");
     });
     data['service_setters'] = serviceSetters;
 
@@ -191,7 +194,7 @@ class ServiceBuilder {
     var gettersMethods = filteredProcedures['class_getters'];
     gettersMethods.forEach((procedureData) {
       Procedure procedure = procedureData['procedure'];
-      var returnType = _convert(procedure.returnType);
+      var returnType = TypeHandler(procedure.returnType).dartTypeString;
       procedureData['return_type'] = returnType;
       procedureData['request_data']['return_type_name'] = returnType;
       procedureData['request_data'] = jsonEncode(procedureData['request_data'])
@@ -210,8 +213,7 @@ class ServiceBuilder {
     settersMethods.forEach((procedureData) {
       Procedure procedure = procedureData['procedure'];
       procedureData['parameters'] = _buildParameters(procedure.parameters);
-
-
+      
       var classData = data['classes'].firstWhere((classData) =>
           classData['class_name'] == procedureData['class_name']);
       classData['class_setters'].add(procedureData);
@@ -251,7 +253,7 @@ class ServiceBuilder {
 
       } else if (serviceSetterProcedureRE.hasMatch(procedure.name)) {
         var match = serviceSetterProcedureRE.firstMatch(procedure.name);
-        result['service_setters'].add({'procedure': procedure, 'procedure_name': match.group(1)});
+        result['service_setters'].add({'procedure': procedure, 'procedure_name': 'set' + match.group(1)});
 
       } else if (classMethodProcedureRE.hasMatch(procedure.name)) {
         var match = classMethodProcedureRE.firstMatch(procedure.name);
@@ -271,7 +273,7 @@ class ServiceBuilder {
       } else if (classSetterMethodProcedureRE.hasMatch(procedure.name)) {
         var match = classSetterMethodProcedureRE.firstMatch(procedure.name);
         result['class_setters']
-            .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
+            .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': 'set' + match.group(2)});
       }
     });
     return result;
@@ -282,84 +284,17 @@ class ServiceBuilder {
     parameters.forEach((parameter) {
       result.add({
         'parameter_name': toCamelCase(parameter.name),
-        'parameter_type': _convert(parameter.type),
+        'parameter_type': TypeHandler(parameter.type)..dartTypeString,
         'parameter_default_value': parameter.defaultValue.toString(),
         'comma': true,
+        // For argument building
+        'argument_type': parameter.type.code.name,
       });
     });
     result.isNotEmpty ? result.last['comma'] = false : null;
     // Remove the "this" parameters, useless in Dart context
     result.removeWhere((data) => data['parameter_name'] == 'this');
     return result;
-  }
-
-  static String _convert(Type type) {
-    switch(type.code.name) {
-      case 'DOUBLE':
-        return 'double';
-        break;
-      case 'FLOAT':
-        return 'double';
-        break;
-      case 'SINT32':
-        return 'int';
-        break;
-      case 'SINT64':
-        return 'Int64';
-        break;
-      case 'UINT32':
-        return 'int';
-        break;
-      case 'UINT64':
-        return 'Int64';
-        break;
-      case 'BOOL':
-        return 'bool';
-        break;
-      case 'STRING':
-        return 'String';
-        break;
-      case 'BYTES':
-        return 'Uint8List';
-        break;
-      case 'CLASS':
-        return type.name;
-        break;
-      case 'ENUMERATION':
-        return type.name;
-        break;
-
-    // todo: the following 4 to be investigated
-      case 'PROCEDURE_CALL':
-        return 'Function';
-        break;
-      case 'STREAM':
-        return 'Stream';
-        break;
-      case 'STATUS':
-        return 'dynamic';
-        break;
-      case 'SERVICES':
-        return 'dynamic';
-        break;
-
-    // todo: to be confirmed
-      case 'TUPLE':
-        return 'List<dynamic>';
-        break;
-      case 'LIST':
-        return 'List<dynamic>';
-        break;
-      case 'SET':
-        return 'List<dynamic>';
-        break;
-      case 'DICTIONARY':
-        return 'Map<String, dynamic>';
-        break;
-
-      default:
-        return 'void';
-    }
   }
 }
 

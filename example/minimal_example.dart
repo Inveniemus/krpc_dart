@@ -17,7 +17,9 @@ void main() async {
 
   print('Client name: ${await client.krpc.getClientName()}');
   print('Paused: ${await client.krpc.paused}');
+  await client.krpc.setPaused(true);
   print('Current Game scene: ${await client.krpc.currentGameScene}');
+  print('Current Game mode: ${await client.spaceCenter.gameMode}');
   print('Science: ${await client.spaceCenter.science}');
   Vessel vessel = await client.spaceCenter.activeVessel;
   exit(0);
