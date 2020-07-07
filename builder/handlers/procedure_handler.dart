@@ -32,6 +32,7 @@ class ProcedureHandler {
   ProcedureNature _nature;
   String _dartName;
   String _dartClassName;
+  static List<String> _capitalProcedureNames = ['SAS', 'RCS'];
 
   Procedure get procedure => _procedure;
   List<Parameter> get arguments => _procedure.parameters;
@@ -41,6 +42,9 @@ class ProcedureHandler {
   bool get isGetter =>
       nature == ProcedureNature.CLASS_GETTER ||
       nature == ProcedureNature.SERVICE_GETTER;
+  bool get isSetter =>
+      nature == ProcedureNature.CLASS_SETTER ||
+          nature == ProcedureNature.SERVICE_SETTER;
 
   ProcedureNature get nature => _nature;
 
@@ -48,7 +52,13 @@ class ProcedureHandler {
       .dartTypeString;
   String get krpcReturnTypeString => TypeHandler(_procedure.returnType)
       .krpcTypeString;
-  String get dartName => toCamelCase(_dartName); // Case conversion done here
+  String get dartName {
+    if (isSetter) return 'set' + _dartName;
+    _capitalProcedureNames.forEach((name) {
+      // todo: deal with it.
+    });
+    return toCamelCase(_dartName);
+  }
   String get dartClassName => _dartClassName;
 
   // Parses the procedure name in order to get it sorted by nature, extract its

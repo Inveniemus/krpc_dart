@@ -15,7 +15,7 @@ class {{service_name}} {
   // Service procedures
   {{#service_procedures}}
   {{{documentation}}}
-  Future<{{{return_type}}}> {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
+  Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
     {{#has_return}}return {{/has_return}}await _client.singleRequest({{{request_data}}});
   }
 
@@ -24,7 +24,7 @@ class {{service_name}} {
   // Service getters
   {{#service_getters}}
   {{{documentation}}}
-  Future<{{{return_type}}}> get {{procedure_name}} async {
+  Future<{{{dart_return_type}}}> get {{dart_name}} async {
     {{#has_return}}return {{/has_return}}await _client.singleRequest({{{request_data}}});
   }
 
@@ -33,7 +33,7 @@ class {{service_name}} {
   // Service setters
   {{#service_setters}}
   {{{documentation}}}
-  void {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
+  void {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
     await _client.singleRequest({{{request_data}}});
   }
 
@@ -56,28 +56,28 @@ class {{class_name}} {
   // Class methods
   {{#class_methods}}
   {{{documentation}}}
-  Future<{{{return_type}}}> {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
+  Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
 
   {{/class_methods}}
 
   // Class static methods
   {{#class_static_methods}}
   {{{documentation}}}
-  static Future<{{{return_type}}}> {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
+  static Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
 
   {{/class_static_methods}}
 
   // Class getters
   {{#class_getters}}
   {{{documentation}}}
-  Future<{{{return_type}}}> get {{procedure_name}} async {}
+  Future<{{{dart_return_type}}}> get {{dart_name}} async {}
 
   {{/class_getters}}
 
   // Class setters
   {{#class_setters}}
   {{{documentation}}}
-  void {{procedure_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
+  void {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
 
   {{/class_setters}}
 }

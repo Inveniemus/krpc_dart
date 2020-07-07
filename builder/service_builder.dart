@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io' show File;
 import 'package:mustache_template/mustache_template.dart';
+import 'handlers/parameter_handler.dart';
+import 'handlers/procedure_handler.dart';
 import 'handlers/type_handler.dart';
 import 'proto/krpc.pb.dart' show Service, Procedure, Parameter, Type;
 import 'utils/string_utils.dart';
@@ -18,6 +20,8 @@ class ServiceBuilder {
     'library_name': '',
     'service_name': '',
     'service_procedures': [],
+    'service_getters': [],
+    'service_setters': [],
     'classes': [],
     'enumerations': [],
     'exceptions': [],
@@ -90,211 +94,74 @@ class ServiceBuilder {
     });
   }
 
+  // Depends on _buildClasses, call this method AFTER!
   void _buildProcedures() {
-    var filteredProcedures = _parseProcedures(_service.procedures);
+    _service.procedures.forEach((procedure) {
+      var handler = ProcedureHandler(procedure);
+      var procedureData = <String, dynamic>{
+        'documentation': parseDoc(handler.documentation),
+        'dart_return_type': handler.dartReturnTypeString,
+        'has_return': handler.dartReturnTypeString != 'void',
+        'dart_name': handler.dartName,
+        'request_data': '{"todo": "todo"}',
+      };
 
-    // For all procedures
-    filteredProcedures.forEach((key, value) {
-      var procedureList = filteredProcedures[key];
-      procedureList.forEach((procedureData) {
-        Procedure procedure = procedureData['procedure'];
-        procedureData['procedure_name'] =
-            toCamelCase(procedureData['procedure_name']);
-        procedureData['documentation'] = parseDoc(procedure.documentation);
-        procedureData['raw_doc'] = procedure.documentation;
-        procedureData['request_data'] = {
-          'service': _service.name,
-          'service_name_snake': toSnakeCase(_service.name),
-          'procedure': procedure.name,
-          'return_type': procedure.returnType.code.name,
-        };
+      var parametersDataList = <Map<String, dynamic>>[];
+      // Build parameters with _buildParameter
+      procedure.parameters.forEach((parameter) {
+        parametersDataList.add(_buildParameter(parameter));
       });
-    });
+      // Remove the 'this' parameter
+      parametersDataList.removeWhere((element) {
+        return element['parameter_name'] == 'this';
+      });
+      if (parametersDataList.isNotEmpty) {
+        // set 'comma' to false for the last parameter
+        parametersDataList.last['comma'] = false;
+      }
+      procedureData['parameters'] = parametersDataList;
 
-    // Service procedures which are Service class methods
-    var serviceProcedures = filteredProcedures['service_procedures'];
-    serviceProcedures.forEach((procedureData) {
-      Procedure procedure = procedureData['procedure'];
-      var returnType = _convert(procedure.returnType);
-      procedureData['return_type'] = returnType;
-      procedureData['request_data']['return_type_name'] = returnType;
-      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
-          .replaceAll('"', "'");
-      returnType == 'void'
-          ? procedureData['has_return'] = false
-          : procedureData['has_return'] = true;
-      procedureData['parameters'] = _buildParameters(procedure.parameters);
-    });
-    data['service_procedures'] = serviceProcedures;
+      var classData;
+      if (handler.dartClassName != null) {
+        classData = data['classes'].firstWhere((element) {
+          return element['class_name'] == handler.dartClassName;
+        });
+      }
 
-    // Service class getters
-    var serviceGetters = filteredProcedures['service_getters'];
-    serviceGetters.forEach((procedureData) {
-      Procedure procedure = procedureData['procedure'];
-      var returnType = _convert(procedure.returnType);
-      procedureData['return_type'] = returnType;
-      procedureData['request_data']['return_type_name'] = returnType;
-      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
-          .replaceAll('"', "'");
-      returnType == 'void'
-          ? procedureData['has_return'] = false
-          : procedureData['has_return'] = true;
-    });
-    data['service_getters'] = serviceGetters;
-
-    // Service class setters
-    var serviceSetters = filteredProcedures['service_setters'];
-    serviceSetters.forEach((procedureData) {
-      Procedure procedure = procedureData['procedure'];
-      procedureData['parameters'] = _buildParameters(procedure.parameters);
-      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
-          .replaceAll('"', "'");
-    });
-    data['service_setters'] = serviceSetters;
-
-    // Class methods
-    var classMethods = filteredProcedures['class_methods'];
-    classMethods.forEach((procedureData) {
-      Procedure procedure = procedureData['procedure'];
-      var returnType = _convert(procedure.returnType);
-      procedureData['return_type'] = returnType;
-      procedureData['request_data']['return_type_name'] = returnType;
-      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
-          .replaceAll('"', "'");
-      returnType == 'void'
-          ? procedureData['has_return'] = false
-          : procedureData['has_return'] = true;
-      procedureData['parameters'] = _buildParameters(procedure.parameters);
-
-      var classData = data['classes'].firstWhere((classData) =>
-          classData['class_name'] == procedureData['class_name']);
-      classData['class_methods'].add(procedureData);
-    });
-
-    // Class static methods
-    var staticClassMethods = filteredProcedures['class_static_methods'];
-    staticClassMethods.forEach((procedureData) {
-      Procedure procedure = procedureData['procedure'];
-      var returnType = _convert(procedure.returnType);
-      procedureData['return_type'] = returnType;
-      procedureData['request_data']['return_type_name'] = returnType;
-      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
-          .replaceAll('"', "'");
-      returnType == 'void'
-          ? procedureData['has_return'] = false
-          : procedureData['has_return'] = true;
-      procedureData['parameters'] = _buildParameters(procedure.parameters);
-
-      var classData = data['classes'].firstWhere((classData) =>
-          classData['class_name'] == procedureData['class_name']);
-      classData['class_static_methods'].add(procedureData);
-    });
-
-    // Class getters
-    var gettersMethods = filteredProcedures['class_getters'];
-    gettersMethods.forEach((procedureData) {
-      Procedure procedure = procedureData['procedure'];
-      var returnType = TypeHandler(procedure.returnType).dartTypeString;
-      procedureData['return_type'] = returnType;
-      procedureData['request_data']['return_type_name'] = returnType;
-      procedureData['request_data'] = jsonEncode(procedureData['request_data'])
-          .replaceAll('"', "'");
-      returnType == 'void'
-          ? procedureData['has_return'] = false
-          : procedureData['has_return'] = true;
-
-      var classData = data['classes'].firstWhere((classData) =>
-          classData['class_name'] == procedureData['class_name']);
-      classData['class_getters'].add(procedureData);
-    });
-    
-    // Class setters
-    var settersMethods = filteredProcedures['class_setters'];
-    settersMethods.forEach((procedureData) {
-      Procedure procedure = procedureData['procedure'];
-      procedureData['parameters'] = _buildParameters(procedure.parameters);
-      
-      var classData = data['classes'].firstWhere((classData) =>
-          classData['class_name'] == procedureData['class_name']);
-      classData['class_setters'].add(procedureData);
-    });
-  }
-
-  static Map<String, dynamic> _parseProcedures(List<Procedure> procedures) {
-
-    var result = {
-      'service_procedures': [],
-      'service_getters': [],
-      'service_setters': [],
-      'class_methods': [],
-      'class_static_methods': [],
-      'class_getters': [],
-      'class_setters': [],
-    };
-
-    var serviceProcedureRE = RegExp(r'^[A-Za-z]+$');
-    var serviceGetterProcedureRE = RegExp(r'^get_([A-Za-z]+)$');
-    var serviceSetterProcedureRE = RegExp(r'^set_([A-Za-z]+)$');
-    var classMethodProcedureRE = RegExp(r'^([A-Za-z]+)_([A-Za-z]+)$');
-    var classStaticMethodProcedureRE =
-    RegExp(r'^([A-Za-z]+)_static_([A-Za-z]+)$');
-    var classGetterMethodProcedureRE = RegExp(r'^([A-Za-z]+)_get_([A-Za-z]+)$');
-    var classSetterMethodProcedureRE = RegExp(r'^([A-Za-z]+)_set_([A-Za-z]+)$');
-
-
-    procedures.forEach((procedure) {
-
-      if (serviceProcedureRE.hasMatch(procedure.name)) {
-        result['service_procedures'].add({'procedure': procedure, 'procedure_name': procedure.name});
-
-      } else if (serviceGetterProcedureRE.hasMatch(procedure.name)) {
-        var match = serviceGetterProcedureRE.firstMatch(procedure.name);
-        result['service_getters'].add({'procedure': procedure, 'procedure_name': match.group(1)});
-
-      } else if (serviceSetterProcedureRE.hasMatch(procedure.name)) {
-        var match = serviceSetterProcedureRE.firstMatch(procedure.name);
-        result['service_setters'].add({'procedure': procedure, 'procedure_name': 'set' + match.group(1)});
-
-      } else if (classMethodProcedureRE.hasMatch(procedure.name)) {
-        var match = classMethodProcedureRE.firstMatch(procedure.name);
-        result['class_methods']
-            .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
-
-      } else if (classStaticMethodProcedureRE.hasMatch(procedure.name)) {
-        var match = classStaticMethodProcedureRE.firstMatch(procedure.name);
-        result['class_static_methods']
-            .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
-
-      } else if (classGetterMethodProcedureRE.hasMatch(procedure.name)) {
-        var match = classGetterMethodProcedureRE.firstMatch(procedure.name);
-        result['class_getters']
-            .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': match.group(2)});
-
-      } else if (classSetterMethodProcedureRE.hasMatch(procedure.name)) {
-        var match = classSetterMethodProcedureRE.firstMatch(procedure.name);
-        result['class_setters']
-            .add({'class_name': match.group(1), 'procedure': procedure, 'procedure_name': 'set' + match.group(2)});
+      switch (handler.nature) {
+        case ProcedureNature.SERVICE_METHOD:
+          data['service_procedures'].add(procedureData);
+          break;
+        case ProcedureNature.SERVICE_GETTER:
+          data['service_getters'].add(procedureData);
+          break;
+        case ProcedureNature.SERVICE_SETTER:
+          data['service_setters'].add(procedureData);
+          break;
+        case ProcedureNature.CLASS_METHOD:
+          classData['class_methods'].add(procedureData);
+          break;
+        case ProcedureNature.CLASS_STATIC_METHOD:
+          classData['class_static_methods'].add(procedureData);
+          break;
+        case ProcedureNature.CLASS_GETTER:
+          classData['class_getters'].add(procedureData);
+          break;
+        case ProcedureNature.CLASS_SETTER:
+          classData['class_setters'].add(procedureData);
+          break;
       }
     });
-    return result;
   }
 
-  static List<Map<String, dynamic>> _buildParameters(List<Parameter> parameters) {
-    var result = <Map<String, dynamic>>[];
-    parameters.forEach((parameter) {
-      result.add({
-        'parameter_name': toCamelCase(parameter.name),
-        'parameter_type': TypeHandler(parameter.type)..dartTypeString,
-        'parameter_default_value': parameter.defaultValue.toString(),
-        'comma': true,
-        // For argument building
-        'argument_type': parameter.type.code.name,
-      });
-    });
-    result.isNotEmpty ? result.last['comma'] = false : null;
-    // Remove the "this" parameters, useless in Dart context
-    result.removeWhere((data) => data['parameter_name'] == 'this');
-    return result;
+  Map<String, dynamic> _buildParameter(Parameter parameter) {
+    var handler = ParameterHandler(parameter);
+    var parameterData = {
+      'parameter_type': handler.dartTypeString,
+      'parameter_name': handler.name,
+      'comma': true,
+    };
+    return parameterData;
   }
 }
 
