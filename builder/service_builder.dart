@@ -103,7 +103,11 @@ class ServiceBuilder {
         'dart_return_type': handler.dartReturnTypeString,
         'has_return': handler.dartReturnTypeString != 'void',
         'dart_name': handler.dartName,
-        'request_data': '{"todo": "todo"}',
+        'request_data': 'OBSOLETE',
+        'arguments': [
+          {'argument_name': 'service', 'argument_value': _service.name},
+          {'argument_name': 'procedure', 'argument_value': handler.krpcName},
+        ],
       };
 
       var parametersDataList = <Map<String, dynamic>>[];

@@ -32,7 +32,7 @@ class ProcedureHandler {
   ProcedureNature _nature;
   String _dartName;
   String _dartClassName;
-  static List<String> _capitalProcedureNames = ['SAS', 'RCS'];
+  static final List<String> _capitalProcedureNames = ['SAS', 'RCS'];
 
   Procedure get procedure => _procedure;
   List<Parameter> get arguments => _procedure.parameters;
@@ -52,6 +52,7 @@ class ProcedureHandler {
       .dartTypeString;
   String get krpcReturnTypeString => TypeHandler(_procedure.returnType)
       .krpcTypeString;
+  String get krpcName => _procedure.name;
   String get dartName {
     if (isSetter) return 'set' + _dartName;
     _capitalProcedureNames.forEach((name) {

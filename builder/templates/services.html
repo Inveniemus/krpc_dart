@@ -16,7 +16,11 @@ class {{service_name}} {
   {{#service_procedures}}
   {{{documentation}}}
   Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({{{request_data}}});
+    {{#has_return}}return {{/has_return}}await _client.singleRequest({
+      {{#arguments}}
+        '{{argument_name}}': '{{argument_value}}',
+      {{/arguments}}
+    });
   }
 
   {{/service_procedures}}
@@ -25,7 +29,11 @@ class {{service_name}} {
   {{#service_getters}}
   {{{documentation}}}
   Future<{{{dart_return_type}}}> get {{dart_name}} async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({{{request_data}}});
+    {{#has_return}}return {{/has_return}}await _client.singleRequest({
+      {{#arguments}}
+        '{{argument_name}}': '{{argument_value}}',
+      {{/arguments}}
+    });
   }
 
   {{/service_getters}}
@@ -34,7 +42,11 @@ class {{service_name}} {
   {{#service_setters}}
   {{{documentation}}}
   void {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
-    await _client.singleRequest({{{request_data}}});
+    await _client.singleRequest({
+      {{#arguments}}
+        '{{argument_name}}': '{{argument_value}}',
+      {{/arguments}}
+    });
   }
 
   {{/service_setters}}
@@ -56,28 +68,52 @@ class {{class_name}} {
   // Class methods
   {{#class_methods}}
   {{{documentation}}}
-  Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
+  Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
+    {{#has_return}}return {{/has_return}}await _client.singleRequest({
+      {{#arguments}}
+        '{{argument_name}}': '{{argument_value}}',
+      {{/arguments}}
+    });
+  }
 
   {{/class_methods}}
 
   // Class static methods
   {{#class_static_methods}}
   {{{documentation}}}
-  static Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
+  Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
+    {{#has_return}}return {{/has_return}}await _client.singleRequest({
+      {{#arguments}}
+        '{{argument_name}}': '{{argument_value}}',
+      {{/arguments}}
+    });
+  }
 
   {{/class_static_methods}}
 
   // Class getters
   {{#class_getters}}
   {{{documentation}}}
-  Future<{{{dart_return_type}}}> get {{dart_name}} async {}
+  Future<{{{dart_return_type}}}> get {{dart_name}} async {
+    {{#has_return}}return {{/has_return}}await _client.singleRequest({
+      {{#arguments}}
+        '{{argument_name}}': '{{argument_value}}',
+      {{/arguments}}
+    });
+  }
 
   {{/class_getters}}
 
   // Class setters
   {{#class_setters}}
   {{{documentation}}}
-  void {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {}
+  void {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
+    {{#has_return}}return {{/has_return}}await _client.singleRequest({
+      {{#arguments}}
+        '{{argument_name}}': '{{argument_value}}',
+      {{/arguments}}
+    });
+  }
 
   {{/class_setters}}
 }
