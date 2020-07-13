@@ -57,10 +57,12 @@ class Client {
     rpcStream = _rpcChannel.stream.asBroadcastStream();
 
     try {
+      print('Getting Client ID for stream connection...');
       var clientId = base64Encode(await krpc.getClientID());
       var wsStreamAddress = 'ws://' + ipAddress + ':' + streamPort.toString() +
           '/?id=' + clientId;
       _streamChannel = IOWebSocketChannel.connect(wsStreamAddress);
+      print('Connected!');
     } on WebSocketChannelException {
       throw ConnectionKrpcDartException('Connection error. Check IP and PORT!');
     }

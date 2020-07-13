@@ -103,10 +103,15 @@ class ServiceBuilder {
         'dart_return_type': handler.dartReturnTypeString,
         'has_return': handler.dartReturnTypeString != 'void',
         'dart_name': handler.dartName,
-        'request_data': 'OBSOLETE',
         'arguments': [
           {'argument_name': 'service', 'argument_value': _service.name},
           {'argument_name': 'procedure', 'argument_value': handler.krpcName},
+          {'argument_name': 'return_type',
+            'argument_value': handler.krpcReturnTypeString},
+          {'argument_name': 'return_type_name',
+            'argument_value': handler.dartReturnTypeString},
+          {'argument_name': 'service_name_snake',
+            'argument_value': toSnakeCase(_service.name)},
         ],
       };
 

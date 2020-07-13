@@ -11,3 +11,15 @@ class ConnectionKrpcDartException extends KrpcDartException {
     return 'ConnectionKrpcDartException: ' + message;
   }
 }
+
+class KrpcError extends KrpcDartException {
+  KrpcError(message) : super(message);
+}
+
+class KrpcErrorResponse extends KrpcError {
+  KrpcErrorResponse(message) : super(message);
+}
+
+class KrpcErrorProcedureResult extends KrpcError {
+  KrpcErrorProcedureResult(message) : super(message);
+}

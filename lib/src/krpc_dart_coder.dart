@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:mirrors';
 
+import 'package:krpc_dart/exceptions.dart';
 import 'package:krpc_dart/proto/krpc.pb.dart'
     show Request, ProcedureCall, Argument, Response, Type, Type_TypeCode, Status, EnumerationValue;
 import 'package:protobuf/protobuf.dart';
@@ -51,17 +52,23 @@ class Coder {
     return request.writeToBuffer();
   }
 
+  /// To decode a single protobuf ProcedureResult message included in a Response
+  ///
+  /// It needs a [response] to manage errors sent by kRPC and to extract payload,
+  /// and return value context to decode it properly and return the expected
+  /// Dart type and value. [typeCode] is mandatory for that purpose. If we need
+  /// more details about the return value to decoded it properly, we use
+  /// optional parameters (for Classes, Enumerations, Status, etc.)
   static dynamic decodeSingleResponse(
       Response response, String typeCode,
       [String typeName, String serviceNameSnakeCase]) {
     if (response.error.name != '') {
-      print(response.error.description);
-      return null; // todo: Exception
+      throw KrpcErrorResponse(response.error.name + response.error.description);
     }
     var result = response.results[0];
     if (result.error.name != '') {
-      print(response.error.description);
-      return null; // todo: Exception
+      throw KrpcErrorProcedureResult(
+          result.error.name + result.error.description);
     }
     var valueDecoded = _valueDecoder(
         Uint8List.fromList(result.value), typeCode, typeName, serviceNameSnakeCase);
