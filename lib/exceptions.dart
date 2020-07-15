@@ -23,3 +23,7 @@ class KrpcErrorResponse extends KrpcError {
 class KrpcErrorProcedureResult extends KrpcError {
   KrpcErrorProcedureResult(message) : super(message);
 }
+
+class KrpcErrorEncoder extends KrpcError {
+  KrpcErrorEncoder(message) : super(message);
+}

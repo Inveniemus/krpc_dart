@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:mirrors';
 
@@ -28,7 +29,8 @@ class Coder {
     } else if (data.containsKey('serviceId') && data['serviceId'] is int) {
       call.serviceId = data['serviceId'];
     } else {
-      // todo: throw an exception
+      throw KrpcErrorEncoder(
+          'Encoder error: No service nor serviceID provided!');
     }
 
     if (data.containsKey('procedure') && data['procedure'] is String) {
@@ -36,17 +38,15 @@ class Coder {
     } else if (data.containsKey('procedureId') && data['procedureId'] is int) {
       call.procedureId = data['procedureId'];
     } else {
-      // todo: throw an exception
+      throw KrpcErrorEncoder(
+          'Encoder error: No procedure nor procedureId provided!');
     }
 
-    if (data.containsKey('arguments')) {
-      List<Map<String, dynamic>> arguments = data['arguments'];
-      arguments
-          .sort((argA, argB) => argA['position'].compareTo(argB['position']));
+    if (data.containsKey('krpc_arguments')) {
+      var arguments = data['krpc_arguments'];
       arguments.forEach((argumentData) {
-        var argument = Argument();
-        argument.position = argumentData['position'];
-        _setArgumentValue(argument, argumentData);
+        var argument = _buildArgument(argumentData);
+        call.arguments.add(argument);
       });
     }
     return request.writeToBuffer();
@@ -58,7 +58,8 @@ class Coder {
   /// and return value context to decode it properly and return the expected
   /// Dart type and value. [typeCode] is mandatory for that purpose. If we need
   /// more details about the return value to decoded it properly, we use
-  /// optional parameters (for Classes, Enumerations, Status, etc.)
+  /// optional parameters [typeName] and [serviceNameSnakeCase] (for Classes,
+  /// Enumerations, Status, etc.).
   static dynamic decodeSingleResponse(
       Response response, String typeCode,
       [String typeName, String serviceNameSnakeCase]) {
@@ -152,20 +153,48 @@ class Coder {
     }
   }
 
-  static void _setArgumentValue(Argument argument, Map<String, dynamic> data) {
-    var value = data['argument_value'];
-    switch (data['argument_type']) {
-      case 'BOOL':
-        argument.$_setBool(2, value);
-    }
-  }
+  static Argument _buildArgument(Map<String, dynamic> data) {
 
-  static Uint8List ClientIDRequest() {
-    var request = Request();
-    var call = ProcedureCall();
-    request.calls.add(call);
-    call.service = 'KRPC';
-    call.procedure = 'GetClientID';
-    return request.writeToBuffer();
+    var argument = Argument();
+    argument.position = data['position'];
+
+    var writer = CodedBufferWriter();
+
+    switch(data['type']) {
+      case 'BOOL':
+        //data['value'] ? argument.value = [1] : argument.value = [0];
+        writer.writeField(1, PbFieldType.OB, data['value']);
+        break;
+      case 'DOUBLE':
+        writer.writeField(1, PbFieldType.OD, data['value']);
+        break;
+      case 'FLOAT':
+        writer.writeField(1, PbFieldType.OF, data['value']);
+        break;
+      case 'SINT32':
+        writer.writeField(1, PbFieldType.KS3, data['value']);
+        break;
+      case 'SINT64':
+        writer.writeField(1, PbFieldType.KS6, data['value']);
+        break;
+      case 'UINT32':
+        writer.writeField(1, PbFieldType.KU3, data['value']);
+        break;
+      case 'UINT64':
+        writer.writeField(1, PbFieldType.KU6, data['value']);
+        break;
+      case 'STRING':
+        writer.writeField(1, PbFieldType.OS, data['value']);
+        break;
+      case 'BYTES':
+        argument.value = data['value'];
+        return argument;
+    }
+
+    var buffer = writer.toBuffer();
+    buffer = buffer.sublist(1);
+    argument.value = buffer;
+
+    return argument;
   }
 }

@@ -113,12 +113,18 @@ class ServiceBuilder {
           {'argument_name': 'service_name_snake',
             'argument_value': toSnakeCase(_service.name)},
         ],
+        'krpc_arguments': <Map<String, dynamic>>[],
       };
 
       var parametersDataList = <Map<String, dynamic>>[];
       // Build parameters with _buildParameter
+      for (var index = 0; index < procedure.parameters.length; index++) {
+        parametersDataList.add(
+            _buildParameter(procedure.parameters[index], index)
+        );
+      }
       procedure.parameters.forEach((parameter) {
-        parametersDataList.add(_buildParameter(parameter));
+
       });
       // Remove the 'this' parameter
       parametersDataList.removeWhere((element) {
@@ -163,9 +169,14 @@ class ServiceBuilder {
     });
   }
 
-  Map<String, dynamic> _buildParameter(Parameter parameter) {
+  /// Builds data with a [ParameterHandler] in order to get required fields
+  /// to build the Service or Class method's parameter, in Dart, and the
+  /// required pieces of data to build the krpc parameters for the encoder.
+  Map<String, dynamic> _buildParameter(Parameter parameter, int position) {
     var handler = ParameterHandler(parameter);
     var parameterData = {
+      'position': position,
+      'krpc_type': handler.krpcTypeString,
       'parameter_type': handler.dartTypeString,
       'parameter_name': handler.name,
       'comma': true,

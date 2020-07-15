@@ -20,6 +20,11 @@ class {{service_name}} {
       {{#arguments}}
       '{{argument_name}}': '{{{argument_value}}}',
       {{/arguments}}
+      'krpc_arguments': [
+      {{#parameters}}
+      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
+      {{/parameters}}
+      ],
     });
   }
 
@@ -33,6 +38,11 @@ class {{service_name}} {
       {{#arguments}}
       '{{argument_name}}': '{{{argument_value}}}',
       {{/arguments}}
+      'krpc_arguments': [
+      {{#parameters}}
+      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
+      {{/parameters}}
+      ],
     });
   }
 
@@ -46,6 +56,11 @@ class {{service_name}} {
       {{#arguments}}
       '{{argument_name}}': '{{{argument_value}}}',
       {{/arguments}}
+      'krpc_arguments': [
+      {{#parameters}}
+      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
+      {{/parameters}}
+      ],
     });
   }
 
@@ -74,6 +89,11 @@ class {{class_name}} {
       {{#arguments}}
      '{{argument_name}}': '{{{argument_value}}}',
       {{/arguments}}
+      'krpc_arguments': [
+      {{#parameters}}
+      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
+      {{/parameters}}
+      ],
     });
   }
 
@@ -88,6 +108,11 @@ class {{class_name}} {
       {{#arguments}}
      '{{argument_name}}': '{{{argument_value}}}',
       {{/arguments}}
+      'krpc_arguments': [
+      {{#parameters}}
+      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
+      {{/parameters}}
+      ],
     });
   }
 
@@ -102,6 +127,11 @@ class {{class_name}} {
       {{#arguments}}
      '{{argument_name}}': '{{{argument_value}}}',
       {{/arguments}}
+      'krpc_arguments': [
+      {{#parameters}}
+      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
+      {{/parameters}}
+      ],
     });
   }
 
@@ -116,6 +146,11 @@ class {{class_name}} {
       {{#arguments}}
      '{{argument_name}}': '{{{argument_value}}}',
       {{/arguments}}
+      'krpc_arguments': [
+      {{#parameters}}
+      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
+      {{/parameters}}
+      ],
     });
   }
 
