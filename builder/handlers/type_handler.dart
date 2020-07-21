@@ -53,10 +53,10 @@ class TypeHandler {
         return 'Stream';
         break;
       case 'STATUS':
-        return 'dynamic';
+        return 'dynamic'; // This is actually a Status object, see protobuf generated file
         break;
       case 'SERVICES':
-        return 'dynamic';
+        return 'dynamic'; // This is actually a Service object, see protobuf generated file
         break;
 
     // todo: to be confirmed
@@ -64,10 +64,16 @@ class TypeHandler {
         return 'List<dynamic>';
         break;
       case 'LIST':
-        return 'List<dynamic>';
+        var typeTxt = 'dynamic';
+        var subTypeHandler = TypeHandler(_type.types[0]);
+        print(subTypeHandler.toString());
+        if (_type.types[0].name != '') typeTxt = _type.types[0].name;
+        return 'List<${typeTxt}>';
         break;
       case 'SET':
-        return 'List<dynamic>';
+        var typeTxt = 'dynamic';
+        if (_type.types[0].name != '') typeTxt = _type.types[0].name;
+        return 'List<${typeTxt}>';
         break;
       case 'DICTIONARY':
         return 'Map<String, dynamic>';
@@ -78,4 +84,9 @@ class TypeHandler {
     }
   }
   String get krpcTypeString => _type.code.name;
+
+  @override
+  String toString() {
+    return 'TYPE code: ${_type.code} name: ${_type.name} subTypes? ${_type.types.isEmpty ? 'NO' : 'YES'}';
+  }
 }

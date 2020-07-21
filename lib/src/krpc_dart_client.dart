@@ -97,7 +97,7 @@ class Client {
       var response = Response.fromBuffer(data);
       if (returnType == 'ENUMERATION' || returnType == 'CLASS') {
         return Coder.decodeSingleResponse(
-            response, returnType, returnTypeName, serviceNameSnakeCase);
+            response, returnType, returnTypeName, serviceNameSnakeCase, this);
       }
       return Coder.decodeSingleResponse(response, returnType);
     } catch (error) {

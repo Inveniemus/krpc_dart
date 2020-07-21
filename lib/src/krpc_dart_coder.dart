@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:mirrors';
 
+import 'package:krpc_dart/src/krpc_dart_client.dart' show Client;
 import 'package:krpc_dart/exceptions.dart';
 import 'package:krpc_dart/proto/krpc.pb.dart'
     show Request, ProcedureCall, Argument, Response, Type, Type_TypeCode, Status, EnumerationValue;
 import 'package:protobuf/protobuf.dart';
+
+import '../krpc_dart.dart';
 
 class Coder {
   /// Request encoder from [dataList] map that should follow the following
@@ -42,6 +45,14 @@ class Coder {
           'Encoder error: No procedure nor procedureId provided!');
     }
 
+    if (data.containsKey('this')) {
+      call.arguments.add(
+        Argument()
+            ..position = 0
+            ..value = data['this']
+      );
+    }
+
     if (data.containsKey('krpc_arguments')) {
       var arguments = data['krpc_arguments'];
       arguments.forEach((argumentData) {
@@ -49,6 +60,7 @@ class Coder {
         call.arguments.add(argument);
       });
     }
+    print(request.toProto3Json());
     return request.writeToBuffer();
   }
 
@@ -62,7 +74,7 @@ class Coder {
   /// Enumerations, Status, etc.).
   static dynamic decodeSingleResponse(
       Response response, String typeCode,
-      [String typeName, String serviceNameSnakeCase]) {
+      [String typeName, String serviceNameSnakeCase, Client client]) {
     if (response.error.name != '') {
       throw KrpcErrorResponse(response.error.name + response.error.description);
     }
@@ -72,14 +84,14 @@ class Coder {
           result.error.name + result.error.description);
     }
     var valueDecoded = _valueDecoder(
-        Uint8List.fromList(result.value), typeCode, typeName, serviceNameSnakeCase);
+        Uint8List.fromList(result.value), typeCode, typeName, serviceNameSnakeCase, client);
     print(valueDecoded);
     return valueDecoded;
   }
 
   static dynamic _valueDecoder(
       Uint8List value, String typeCode,
-      [String typeName, String serviceNameSnakeCase]) {
+      [String typeName, String serviceNameSnakeCase, Client client]) {
 
     print('Value decoder:\nValue (raw): ${value}\nType: ${typeCode}');
 
@@ -119,7 +131,7 @@ class Coder {
         print('${typeCode} name: ${typeName}');
         var classSymbol = MirrorSystem.getSymbol(typeName);
         ClassMirror classMirror = library.declarations[classSymbol];
-        return classMirror.newInstance(Symbol(''), [null, value], {}).reflectee;
+        return classMirror.newInstance(Symbol(''), [client, value], {}).reflectee;
       case 'ENUMERATION':
         print('${typeCode} name: ${typeName}');
         var classSymbol = MirrorSystem.getSymbol(typeName);
