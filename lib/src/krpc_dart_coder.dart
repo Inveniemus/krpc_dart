@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:mirrors';
 
+import 'package:krpc_dart/src/krpc_dart_call_handler.dart';
 import 'package:krpc_dart/src/krpc_dart_client.dart' show Client;
 import 'package:krpc_dart/exceptions.dart';
 import 'package:krpc_dart/proto/krpc.pb.dart'
@@ -11,6 +11,42 @@ import 'package:protobuf/protobuf.dart';
 import '../krpc_dart.dart';
 
 class Coder {
+
+  String expectedReturnType;
+
+  Uint8List encodeCall(CallMetaData metaData) {
+    var call = ProcedureCall();
+    call.service = metaData.serviceName;
+    call.procedure = metaData.procedureName;
+    expectedReturnType = metaData.returnType;
+
+    return call.writeToBuffer();
+  }
+
+  Uint8List encodeCallAsSingleRequest(CallMetaData metaData) {
+    var request = Request();
+    var call = ProcedureCall();
+    call.service = metaData.serviceName;
+    call.procedure = metaData.procedureName;
+    expectedReturnType = metaData.returnType;
+
+    request.calls.add(call);
+
+    return request.writeToBuffer();
+  }
+
+  dynamic decodeResponse(Response response) {
+    if (!(response is  Response)) {
+      throw KrpcErrorEncoder('Bug! a non Response object is submitted to'
+          'Coder.decodeResponse method!');
+    }
+
+    var result = response.results[0];
+    // TODO : kRPC errors handling
+
+    return _valueDecoder(result.value, expectedReturnType);
+  }
+
   /// Request encoder from [dataList] map that should follow the following
   /// structure, derived from the protobuf Request message structure:
   /// {'service': <service name, as string>,

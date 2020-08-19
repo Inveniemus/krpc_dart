@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:krpc_dart/exceptions.dart';
 import 'package:krpc_dart/krpc_dart.dart';
 import 'package:krpc_dart/proto/krpc.pb.dart' show Response, Request, Type, Type_TypeCode;
+import 'package:krpc_dart/src/krpc_dart_call_handler.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -41,6 +42,7 @@ class Client {
     krpc = KRPC(this);
 
     state = StreamController();
+    state.stream.asBroadcastStream().listen((event) => print(event));
     state.add(CONNECTION_STATUS.DISCONNECTED);
   }
 
@@ -66,6 +68,28 @@ class Client {
     } on WebSocketChannelException {
       throw ConnectionKrpcDartException('Connection error. Check IP and PORT!');
     }
+  }
+
+  Future<dynamic> handle(CallMetaData callMetaData) async {
+    state.add(CONNECTION_STATUS.WAITING);
+    var handler = CallHandler(callMetaData);
+    print(handler);
+
+    // For now, handling any call as a single request... TODO
+    _rpcChannel.sink.add(handler.encodedSingleRequest);
+    Response response;
+    try {
+      Uint8List data = await rpcStream.first;
+      state.add(CONNECTION_STATUS.CONNECTED);
+      response = Response.fromBuffer(data);
+    } catch (error) {
+      state.add(CONNECTION_STATUS.ERROR);
+      rethrow;
+    }
+
+    var returnValue = handler.handleResponse(response);
+    print(returnValue);
+    return returnValue;
   }
 
   /// Sends a single RPC request to kRPC server and wait for an answer if applicable.

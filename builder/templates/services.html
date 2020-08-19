@@ -4,6 +4,7 @@ library {{library_name}};
 import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart';
 import '../krpc_dart_client.dart';
+import '../krpc_dart_call_handler.dart';
 
 {{{documentation}}}
 class {{service_name}} {
@@ -16,16 +17,11 @@ class {{service_name}} {
   {{#service_procedures}}
   {{{documentation}}}
   Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({
-      {{#arguments}}
-      '{{argument_name}}': '{{{argument_value}}}',
-      {{/arguments}}
-      'krpc_arguments': [
-      {{#parameters}}
-      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
-      {{/parameters}}
-      ],
-    });
+    {{#has_return}}return {{/has_return}}await _client.handle(
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}',
+        []
+      )
+    );
   }
 
   {{/service_procedures}}

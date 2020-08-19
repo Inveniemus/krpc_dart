@@ -96,16 +96,22 @@ class ServiceBuilder {
 
   // Depends on _buildClasses, call this method AFTER!
   void _buildProcedures() {
+    assert(data['classes'].isNotEmpty);
     _service.procedures.forEach((procedure) {
       var handler = ProcedureHandler(procedure);
       var procedureData = <String, dynamic>{
+        // Documentation string
         'documentation': parseDoc(handler.documentation),
+        // Dart return handling
         'dart_return_type': handler.dartReturnTypeString,
         'has_return': handler.dartReturnTypeString != 'void',
+        // Name of the Dart method
         'dart_name': handler.dartName,
+        // Arguments of the CallMetaData constructor
+        'service_krpc_name': _service.name,
+        'procedure_krpc_name': handler.krpcName,
+        'krpc_return_type': handler.krpcReturnTypeString,
         'arguments': [
-          {'argument_name': 'service', 'argument_value': _service.name},
-          {'argument_name': 'procedure', 'argument_value': handler.krpcName},
           {'argument_name': 'return_type',
             'argument_value': handler.krpcReturnTypeString},
           {'argument_name': 'return_type_name',
