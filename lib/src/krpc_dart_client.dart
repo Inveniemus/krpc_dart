@@ -9,8 +9,6 @@ import 'package:krpc_dart/src/krpc_dart_call_handler.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
-import 'krpc_dart_coder.dart';
-
 enum CONNECTION_STATUS {
   CONNECTED,
   DISCONNECTED,
@@ -72,61 +70,21 @@ class Client {
 
   Future<dynamic> handle(CallMetaData callMetaData) async {
     state.add(CONNECTION_STATUS.WAITING);
-    var handler = CallHandler(callMetaData);
+    var handler = CallHandler(callMetaData, this);
     print(handler);
 
     // For now, handling any call as a single request... TODO
     _rpcChannel.sink.add(handler.encodedSingleRequest);
-    Response response;
+    Uint8List data;
     try {
-      Uint8List data = await rpcStream.first;
+      data = await rpcStream.first;
       state.add(CONNECTION_STATUS.CONNECTED);
-      response = Response.fromBuffer(data);
     } catch (error) {
       state.add(CONNECTION_STATUS.ERROR);
       rethrow;
     }
 
-    var returnValue = handler.handleResponse(response);
-    print(returnValue);
+    var returnValue = handler.handleResponse(data);
     return returnValue;
-  }
-
-  /// Sends a single RPC request to kRPC server and wait for an answer if applicable.
-  /// [callData] should be:
-  /// {'service': <service name, as string>,
-  ///  'procedure': <procedure name, as string>,
-  ///  'serviceId': <service id, as int>,
-  ///  'procedureId': <procedure id, as int>,
-  ///  'arguments': [
-  ///    {'position': <argument's position, as int>,
-  ///     'value': <value, as any type it may have>,
-  ///  ],
-  /// }
-  Future<dynamic> singleRequest(
-      Map<String, dynamic> callData
-      ) async {
-    // 1. Encode and send the Request
-    state.add(CONNECTION_STATUS.WAITING);
-    _rpcChannel.sink.add(Coder.encodeSingleRequest(callData));
-
-    var returnType = callData['return_type'] ?? 'BYTES';
-    var returnTypeName = callData['return_type_name'];
-    var serviceNameSnakeCase = callData['service_name_snake'];
-
-    // 2. Listen to the channel for a Response
-    try {
-      Uint8List data = await rpcStream.first;
-      state.add(CONNECTION_STATUS.CONNECTED);
-      var response = Response.fromBuffer(data);
-      if (returnType == 'ENUMERATION' || returnType == 'CLASS') {
-        return Coder.decodeSingleResponse(
-            response, returnType, returnTypeName, serviceNameSnakeCase, this);
-      }
-      return Coder.decodeSingleResponse(response, returnType);
-    } catch (error) {
-      state.add(CONNECTION_STATUS.ERROR);
-      rethrow;
-    }
   }
 }

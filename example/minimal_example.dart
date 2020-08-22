@@ -17,8 +17,6 @@ void main() async {
 
   print('Client name: ${await client.krpc.getClientName()}');
   print('Paused: ${await client.krpc.paused}');
-  await client.krpc.setPaused(true);
-  sleep(Duration(seconds: 1));
   await client.krpc.setPaused(false);
   print('Paused: ${await client.krpc.paused}');
   print('Current Game scene: ${await client.krpc.currentGameScene}');
@@ -26,8 +24,12 @@ void main() async {
   Vessel vessel = await client.spaceCenter.activeVessel;
   print(await vessel.name);
   print(await vessel.type);
+  var autopilot = await vessel.autoPilot;
+  await autopilot.setSAS(true);
+  await autopilot.setSASMode(SASMode.PROGRADE);
   print('Vessels: ${await client.spaceCenter.vessels}');
   print('Launchable vessels: ${await client.spaceCenter.launchableVessels('VAB')}');
+  await client.krpc.setPaused(true);
   exit(0);
   try{
     //print('Science: ${await client.spaceCenter.science}');

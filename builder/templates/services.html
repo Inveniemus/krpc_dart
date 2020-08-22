@@ -18,8 +18,12 @@ class {{service_name}} {
   {{{documentation}}}
   Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
     {{#has_return}}return {{/has_return}}await _client.handle(
-      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}',
-        []
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}', '{{{dart_return_type}}}', '{{library_name}}', null,
+        [
+          {{#parameters}}
+          ArgumentMetaData({{position}}, '{{krpc_type}}', {{parameter_name}}),
+          {{/parameters}}
+        ]
       )
     );
   }
@@ -30,16 +34,11 @@ class {{service_name}} {
   {{#service_getters}}
   {{{documentation}}}
   Future<{{{dart_return_type}}}> get {{dart_name}} async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({
-      {{#arguments}}
-      '{{argument_name}}': '{{{argument_value}}}',
-      {{/arguments}}
-      'krpc_arguments': [
-      {{#parameters}}
-      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
-      {{/parameters}}
-      ],
-    });
+    {{#has_return}}return {{/has_return}}await _client.handle(
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}', '{{{dart_return_type}}}', '{{library_name}}', null,
+        []
+      )
+    );
   }
 
   {{/service_getters}}
@@ -48,16 +47,15 @@ class {{service_name}} {
   {{#service_setters}}
   {{{documentation}}}
   void {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
-    await _client.singleRequest({
-      {{#arguments}}
-      '{{argument_name}}': '{{{argument_value}}}',
-      {{/arguments}}
-      'krpc_arguments': [
-      {{#parameters}}
-      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
-      {{/parameters}}
-      ],
-    });
+    {{#has_return}}return {{/has_return}}await _client.handle(
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}', '{{{dart_return_type}}}', '{{library_name}}', null,
+        [
+          {{#parameters}}
+          ArgumentMetaData({{position}}, '{{krpc_type}}', {{parameter_name}}),
+          {{/parameters}}
+        ]
+      )
+    );
   }
 
   {{/service_setters}}
@@ -80,17 +78,15 @@ class {{class_name}} {
   {{#class_methods}}
   {{{documentation}}}
   Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({
-     'this': _value,
-      {{#arguments}}
-     '{{argument_name}}': '{{{argument_value}}}',
-      {{/arguments}}
-      'krpc_arguments': [
-      {{#parameters}}
-      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
-      {{/parameters}}
-      ],
-    });
+    {{#has_return}}return {{/has_return}}await _client.handle(
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}', '{{{dart_return_type}}}', '{{library_name}}', _value,
+        [
+          {{#parameters}}
+          ArgumentMetaData({{position}}, '{{krpc_type}}', {{parameter_name}}),
+          {{/parameters}}
+        ]
+      )
+    );
   }
 
   {{/class_methods}}
@@ -99,17 +95,15 @@ class {{class_name}} {
   {{#class_static_methods}}
   {{{documentation}}}
   Future<{{{dart_return_type}}}> {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({
-     'this': _value,
-      {{#arguments}}
-     '{{argument_name}}': '{{{argument_value}}}',
-      {{/arguments}}
-      'krpc_arguments': [
-      {{#parameters}}
-      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
-      {{/parameters}}
-      ],
-    });
+    {{#has_return}}return {{/has_return}}await _client.handle(
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}', '{{{dart_return_type}}}', '{{library_name}}', _value,
+        [
+          {{#parameters}}
+          ArgumentMetaData({{position}}, '{{krpc_type}}', {{parameter_name}}),
+          {{/parameters}}
+        ]
+      )
+    );
   }
 
   {{/class_static_methods}}
@@ -118,17 +112,15 @@ class {{class_name}} {
   {{#class_getters}}
   {{{documentation}}}
   Future<{{{dart_return_type}}}> get {{dart_name}} async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({
-     'this': _value,
-      {{#arguments}}
-     '{{argument_name}}': '{{{argument_value}}}',
-      {{/arguments}}
-      'krpc_arguments': [
-      {{#parameters}}
-      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
-      {{/parameters}}
-      ],
-    });
+    {{#has_return}}return {{/has_return}}await _client.handle(
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}', '{{{dart_return_type}}}', '{{library_name}}', _value,
+        [
+          {{#parameters}}
+          ArgumentMetaData({{position}}, '{{krpc_type}}', {{parameter_name}}),
+          {{/parameters}}
+        ]
+      )
+    );
   }
 
   {{/class_getters}}
@@ -137,17 +129,15 @@ class {{class_name}} {
   {{#class_setters}}
   {{{documentation}}}
   void {{dart_name}}({{#parameters}}{{{parameter_type}}} {{parameter_name}}{{#comma}}, {{/comma}}{{/parameters}}) async {
-    {{#has_return}}return {{/has_return}}await _client.singleRequest({
-     'this': _value,
-      {{#arguments}}
-     '{{argument_name}}': '{{{argument_value}}}',
-      {{/arguments}}
-      'krpc_arguments': [
-      {{#parameters}}
-      {'position': {{position}}, 'type': '{{krpc_type}}', 'value': {{parameter_name}}},
-      {{/parameters}}
-      ],
-    });
+    {{#has_return}}return {{/has_return}}await _client.handle(
+      CallMetaData('{{service_krpc_name}}', '{{procedure_krpc_name}}', '{{krpc_return_type}}', '{{{dart_return_type}}}', '{{library_name}}', _value,
+        [
+          {{#parameters}}
+          ArgumentMetaData({{position}}, '{{krpc_type}}', {{parameter_name}}),
+          {{/parameters}}
+        ]
+      )
+    );
   }
 
   {{/class_setters}}

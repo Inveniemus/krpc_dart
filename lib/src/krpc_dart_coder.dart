@@ -12,124 +12,64 @@ import '../krpc_dart.dart';
 
 class Coder {
 
-  String expectedReturnType;
+  final Client _client;
+  String expectedKrpcReturnType;
+  String expectedDartReturnType;
+  String expectedLibraryName;
+
+  Coder(this._client);
 
   Uint8List encodeCall(CallMetaData metaData) {
     var call = ProcedureCall();
     call.service = metaData.serviceName;
     call.procedure = metaData.procedureName;
-    expectedReturnType = metaData.returnType;
+    expectedKrpcReturnType = metaData.krpcReturnType;
 
     return call.writeToBuffer();
   }
 
   Uint8List encodeCallAsSingleRequest(CallMetaData metaData) {
+
+    // Initial set-up of the request
     var request = Request();
     var call = ProcedureCall();
     call.service = metaData.serviceName;
     call.procedure = metaData.procedureName;
-    expectedReturnType = metaData.returnType;
 
+    // Addition of the instance's reference if relevant
+    if (metaData.classReference != null) {
+      call.arguments.add(
+        Argument()
+            ..position = 0
+            ..value = metaData.classReference
+      );
+    }
+    metaData.argumentsMetaData.forEach((argumentMetaData) {
+      call.arguments.add(_buildArgument(argumentMetaData));
+    });
     request.calls.add(call);
+
+    expectedKrpcReturnType = metaData.krpcReturnType;
+    expectedDartReturnType = metaData.dartReturnType;
+    expectedLibraryName = metaData.libraryName;
 
     return request.writeToBuffer();
   }
 
-  dynamic decodeResponse(Response response) {
-    if (!(response is  Response)) {
-      throw KrpcErrorEncoder('Bug! a non Response object is submitted to'
-          'Coder.decodeResponse method!');
-    }
+  dynamic decodeResponse(Uint8List data) {
+
+    var response = Response.fromBuffer(data);
+    // TODO : kRPC errors handling
 
     var result = response.results[0];
     // TODO : kRPC errors handling
 
-    return _valueDecoder(result.value, expectedReturnType);
+    return _valueDecoder(Uint8List.fromList(result.value));
   }
 
-  /// Request encoder from [dataList] map that should follow the following
-  /// structure, derived from the protobuf Request message structure:
-  /// {'service': <service name, as string>,
-  ///  'procedure': <procedure name, as string>,
-  ///  'serviceId': <service id, as int>,
-  ///  'procedureId': <procedure id, as int>,
-  ///  'arguments': [
-  ///    {'position': <argument's position, as int>,
-  ///     'value': <value, as any type it may have>,
-  ///  ],
-  /// }
-  static Uint8List encodeSingleRequest(Map<String, dynamic> data) {
-    var request = Request();
-    var call = ProcedureCall();
-    request.calls.add(call);
+  dynamic _valueDecoder(Uint8List value) {
 
-    if (data.containsKey('service') && data['service'] is String) {
-      call.service = data['service'];
-    } else if (data.containsKey('serviceId') && data['serviceId'] is int) {
-      call.serviceId = data['serviceId'];
-    } else {
-      throw KrpcErrorEncoder(
-          'Encoder error: No service nor serviceID provided!');
-    }
-
-    if (data.containsKey('procedure') && data['procedure'] is String) {
-      call.procedure = data['procedure'];
-    } else if (data.containsKey('procedureId') && data['procedureId'] is int) {
-      call.procedureId = data['procedureId'];
-    } else {
-      throw KrpcErrorEncoder(
-          'Encoder error: No procedure nor procedureId provided!');
-    }
-
-    if (data.containsKey('this')) {
-      call.arguments.add(
-        Argument()
-            ..position = 0
-            ..value = data['this']
-      );
-    }
-
-    if (data.containsKey('krpc_arguments')) {
-      var arguments = data['krpc_arguments'];
-      arguments.forEach((argumentData) {
-        var argument = _buildArgument(argumentData);
-        call.arguments.add(argument);
-      });
-    }
-    print(request.toProto3Json());
-    return request.writeToBuffer();
-  }
-
-  /// To decode a single protobuf ProcedureResult message included in a Response
-  ///
-  /// It needs a [response] to manage errors sent by kRPC and to extract payload,
-  /// and return value context to decode it properly and return the expected
-  /// Dart type and value. [typeCode] is mandatory for that purpose. If we need
-  /// more details about the return value to decoded it properly, we use
-  /// optional parameters [typeName] and [serviceNameSnakeCase] (for Classes,
-  /// Enumerations, Status, etc.).
-  static dynamic decodeSingleResponse(
-      Response response, String typeCode,
-      [String typeName, String serviceNameSnakeCase, Client client]) {
-    if (response.error.name != '') {
-      throw KrpcErrorResponse(response.error.name + response.error.description);
-    }
-    var result = response.results[0];
-    if (result.error.name != '') {
-      throw KrpcErrorProcedureResult(
-          result.error.name + result.error.description);
-    }
-    var valueDecoded = _valueDecoder(
-        Uint8List.fromList(result.value), typeCode, typeName, serviceNameSnakeCase, client);
-    print(valueDecoded);
-    return valueDecoded;
-  }
-
-  static dynamic _valueDecoder(
-      Uint8List value, String typeCode,
-      [String typeName, String serviceNameSnakeCase, Client client]) {
-
-    print('Value decoder:\nValue (raw): ${value}\nType: ${typeCode}');
+    print('Value decoder: Value (raw): ${value} Type: ${expectedKrpcReturnType}');
 
     // When krpc cannot find requested stuff, value will be an empty list
     if (value.isEmpty) return null;
@@ -137,12 +77,12 @@ class Coder {
     var reader = CodedBufferReader(value);
 
     var library;
-    if (serviceNameSnakeCase != null) {
-      var librarySymbol = Symbol(serviceNameSnakeCase);
+    if (expectedLibraryName != null) {
+      var librarySymbol = Symbol(expectedLibraryName);
       library = currentMirrorSystem().findLibrary(librarySymbol);
     }
 
-    switch(typeCode) {
+    switch(expectedKrpcReturnType) {
       case 'NONE':
         return null;
       case 'DOUBLE':
@@ -164,13 +104,13 @@ class Coder {
       case 'BYTES':
         return value;
       case 'CLASS':
-        print('${typeCode} name: ${typeName}');
-        var classSymbol = MirrorSystem.getSymbol(typeName);
+        print('${expectedKrpcReturnType} name: ${expectedDartReturnType}');
+        var classSymbol = MirrorSystem.getSymbol(expectedDartReturnType);
         ClassMirror classMirror = library.declarations[classSymbol];
-        return classMirror.newInstance(Symbol(''), [client, value], {}).reflectee;
+        return classMirror.newInstance(Symbol(''), [_client, value], {}).reflectee;
       case 'ENUMERATION':
-        print('${typeCode} name: ${typeName}');
-        var classSymbol = MirrorSystem.getSymbol(typeName);
+        print('${expectedKrpcReturnType} name: ${expectedDartReturnType}');
+        var classSymbol = MirrorSystem.getSymbol(expectedDartReturnType);
         ClassMirror classMirror = library.declarations[classSymbol];
         var indexNumber = reader.readEnum() ~/ 2; // Divided by 2 for whatever reason, I don't know why.
         var symbolName = classMirror.declarations.keys.elementAt(indexNumber + 3); // Very dirty.
@@ -201,41 +141,41 @@ class Coder {
     }
   }
 
-  static Argument _buildArgument(Map<String, dynamic> data) {
+  static Argument _buildArgument(ArgumentMetaData metaData) {
 
     var argument = Argument();
-    argument.position = data['position'];
+    argument.position = metaData.position;
 
     var writer = CodedBufferWriter();
 
-    switch(data['type']) {
+    switch(metaData.krpcType) {
       case 'BOOL':
         //data['value'] ? argument.value = [1] : argument.value = [0];
-        writer.writeField(1, PbFieldType.OB, data['value']);
+        writer.writeField(1, PbFieldType.OB, metaData.value);
         break;
       case 'DOUBLE':
-        writer.writeField(1, PbFieldType.OD, data['value']);
+        writer.writeField(1, PbFieldType.OD, metaData.value);
         break;
       case 'FLOAT':
-        writer.writeField(1, PbFieldType.OF, data['value']);
+        writer.writeField(1, PbFieldType.OF, metaData.value);
         break;
       case 'SINT32':
-        writer.writeField(1, PbFieldType.KS3, data['value']);
+        writer.writeField(1, PbFieldType.KS3, metaData.value);
         break;
       case 'SINT64':
-        writer.writeField(1, PbFieldType.KS6, data['value']);
+        writer.writeField(1, PbFieldType.KS6, metaData.value);
         break;
       case 'UINT32':
-        writer.writeField(1, PbFieldType.KU3, data['value']);
+        writer.writeField(1, PbFieldType.KU3, metaData.value);
         break;
       case 'UINT64':
-        writer.writeField(1, PbFieldType.KU6, data['value']);
+        writer.writeField(1, PbFieldType.KU6, metaData.value);
         break;
       case 'STRING':
-        writer.writeField(1, PbFieldType.OS, data['value']);
+        writer.writeField(1, PbFieldType.OS, metaData.value);
         break;
       case 'BYTES':
-        argument.value = data['value'];
+        argument.value = metaData.value;
         return argument;
     }
 

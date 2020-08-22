@@ -1,32 +1,39 @@
 import 'dart:typed_data';
 import 'krpc_dart_coder.dart' show Coder;
+import 'krpc_dart_client.dart' show Client;
 
 /// Structure to deal with call metadata.
 /// [_serviceName] is the name of the service as defined by the server, e.g.
 /// "KRPC" or "SpaceCenter". Case is important!
 /// [_procedureName] same as above...
-/// [_returnType] same as above, used to configure CallHandler for the eventual
+/// [_krpcReturnType] same as above, used to configure CallHandler for the eventual
 /// result.
 /// [_argumentsMetaData] is a list of [ArgumentMetaData] instances.
 class CallMetaData {
   final String _serviceName;
   final String _procedureName;
-  final String _returnType;
+  final String _krpcReturnType;
+  final String _dartReturnType;
+  final String _libraryName;
+  final Uint8List _classReference;
   final List<ArgumentMetaData> _argumentsMetaData;
 
-  CallMetaData(this._serviceName, this._procedureName, this._returnType,
+  CallMetaData(this._serviceName, this._procedureName, this._krpcReturnType, this._dartReturnType, this._libraryName, this._classReference,
     this._argumentsMetaData
   );
 
   String get serviceName => _serviceName;
   String get procedureName => _procedureName;
-  String get returnType => _returnType;
+  String get krpcReturnType => _krpcReturnType;
+  String get dartReturnType => _dartReturnType;
+  String get libraryName => _libraryName;
+  Uint8List get classReference => _classReference;
   List<ArgumentMetaData> get argumentsMetaData => _argumentsMetaData;
 
   @override
   String toString() {
     return '\nCALL: (service)${_serviceName} (procedure)${_procedureName}\n'
-        '  EXPECTED RETURN: (type)${_returnType}\n'
+        '  EXPECTED RETURN: (type)${_krpcReturnType}\n'
         '  ARGUMENTS: ${_argumentsMetaData}';
   }
 }
@@ -34,16 +41,18 @@ class CallMetaData {
 /// Structure to deal with argument metadata.
 class ArgumentMetaData {
   final int _position;
-  Uint8List _value;
+  final String _krpcType;
+  final dynamic _value;
 
-  ArgumentMetaData(this._position);
+  ArgumentMetaData(this._position, this._krpcType, this._value);
 
   int get position => _position;
-  Uint8List get value => _value;
+  String get krpcType => _krpcType;
+  dynamic get value => _value;
 
   @override
   String toString() {
-    return '${_position}';
+    return '${_position} - ${_krpcType} - ${_value}';
   }
 }
 
@@ -56,15 +65,16 @@ class ArgumentMetaData {
 class CallHandler {
   final CallMetaData _callMetaData;
   final Coder _coder;
+  final Client _client;
 
-  CallHandler(this._callMetaData) : _coder = Coder();
+  CallHandler(this._callMetaData, this._client) : _coder = Coder(_client);
 
   Uint8List get encodedCall => _coder.encodeCall(_callMetaData);
   Uint8List get encodedSingleRequest =>
       _coder.encodeCallAsSingleRequest(_callMetaData);
 
-  dynamic handleResponse(dynamic response) {
-    return _coder.decodeResponse(response);
+  dynamic handleResponse(Uint8List data) {
+    return _coder.decodeResponse(data);
   }
 
   @override

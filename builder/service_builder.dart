@@ -111,14 +111,7 @@ class ServiceBuilder {
         'service_krpc_name': _service.name,
         'procedure_krpc_name': handler.krpcName,
         'krpc_return_type': handler.krpcReturnTypeString,
-        'arguments': [
-          {'argument_name': 'return_type',
-            'argument_value': handler.krpcReturnTypeString},
-          {'argument_name': 'return_type_name',
-            'argument_value': handler.dartReturnTypeString},
-          {'argument_name': 'service_name_snake',
-            'argument_value': toSnakeCase(_service.name)},
-        ],
+        'library_name': toSnakeCase(_service.name),
         'krpc_arguments': <Map<String, dynamic>>[],
       };
 
