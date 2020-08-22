@@ -12,6 +12,10 @@ class ConnectionKrpcDartException extends KrpcDartException {
   }
 }
 
+class NotImplementedKrpcDartException extends KrpcDartException {
+  NotImplementedKrpcDartException(message) : super(message);
+}
+
 class KrpcError extends KrpcDartException {
   KrpcError(message) : super(message);
 }

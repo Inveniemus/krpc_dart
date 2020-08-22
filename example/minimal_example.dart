@@ -14,31 +14,33 @@ void main() async {
     exit(-1);
   }
 
-
-  print('Client name: ${await client.krpc.getClientName()}');
-  print('Paused: ${await client.krpc.paused}');
-  await client.krpc.setPaused(false);
-  print('Paused: ${await client.krpc.paused}');
-  print('Current Game scene: ${await client.krpc.currentGameScene}');
-  print('Current Game mode: ${await client.spaceCenter.gameMode}');
-  Vessel vessel = await client.spaceCenter.activeVessel;
-  print(await vessel.name);
-  print(await vessel.type);
-  var autopilot = await vessel.autoPilot;
-  await autopilot.setSAS(true);
-  await autopilot.setSASMode(SASMode.PROGRADE);
-  print('Vessels: ${await client.spaceCenter.vessels}');
-  print('Launchable vessels: ${await client.spaceCenter.launchableVessels('VAB')}');
-  await client.krpc.setPaused(true);
-  exit(0);
   try{
-    //print('Science: ${await client.spaceCenter.science}');
-    Vessel vessel = await client.spaceCenter.activeVessel;
+    print('Client name: ${await client.krpc.getClientName()}');
+    print('Paused: ${await client.krpc.paused}');
+    await client.krpc.setPaused(false);
+    print('Paused: ${await client.krpc.paused}');
+    print('Current Game scene: ${await client.krpc.currentGameScene}');
+    print('Current Game mode: ${await client.spaceCenter.gameMode}');
+    var vessel = await client.spaceCenter.activeVessel;
     print(await vessel.name);
-    AutoPilot ap = await vessel.autoPilot;
-    ap.setSAS(false);
+    print(await vessel.type);
+    var autopilot = await vessel.autoPilot;
+    await autopilot.setSAS(true);
+    await autopilot.setSASMode(SASMode.PROGRADE);
+    print('SpeedMode:');
+    var control = await vessel.control;
+    await control.setSpeedMode(SpeedMode.SURFACE);
+    sleep(Duration(seconds: 1));
+    await control.setSpeedMode(SpeedMode.ORBIT);
+    print('Vessels: ${await client.spaceCenter.vessels}');
+    print('Launchable vessels: ${await client.spaceCenter.launchableVessels('VAB')}');
+    await client.krpc.setPaused(true);
   } on KrpcError catch(e) {
     print('ERROR: ${e.message}');
+    exit(1);
+  } on NotImplementedKrpcDartException catch(e) {
+    print('NOT IMPLEMENTED EXCEPTION: ${e.message}');
+    exit(1);
   }
   exit(0);
 }

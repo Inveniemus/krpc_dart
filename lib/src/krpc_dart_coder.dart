@@ -59,10 +59,14 @@ class Coder {
   dynamic decodeResponse(Uint8List data) {
 
     var response = Response.fromBuffer(data);
-    // TODO : kRPC errors handling
+    if (response.hasError()) {
+      throw KrpcErrorResponse(response.error);
+    }
 
     var result = response.results[0];
-    // TODO : kRPC errors handling
+    if (result.hasError()) {
+      throw KrpcErrorProcedureResult(result.error);
+    }
 
     return _valueDecoder(Uint8List.fromList(result.value));
   }
@@ -150,7 +154,6 @@ class Coder {
 
     switch(metaData.krpcType) {
       case 'BOOL':
-        //data['value'] ? argument.value = [1] : argument.value = [0];
         writer.writeField(1, PbFieldType.OB, metaData.value);
         break;
       case 'DOUBLE':
@@ -177,11 +180,19 @@ class Coder {
       case 'BYTES':
         argument.value = metaData.value;
         return argument;
+      case 'ENUMERATION':
+        writer.writeField(1, PbFieldType.O3, metaData.value.index * 2); // Multiplied by 2 for whatever reason, I don't know why.
+        break;
+      default:
+        throw NotImplementedKrpcDartException(
+            'The Value decoder was given an unknown type: ${metaData.krpcType}'
+        );
     }
 
     var buffer = writer.toBuffer();
     buffer = buffer.sublist(1);
     argument.value = buffer;
+    print(buffer);
 
     return argument;
   }
