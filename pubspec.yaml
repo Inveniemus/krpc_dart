@@ -1,6 +1,6 @@
 name: krpc_dart
-description: A starting point for Dart libraries or applications.
-# version: 1.0.0
+description: The library for kRPC
+version: 0.1.0
 # homepage: https://www.example.com
 
 environment:
@@ -8,11 +8,13 @@ environment:
 
 dependencies:
   web_socket_channel: ^1.1.0
-  protobuf: ^1.0.1
+  protobuf: ^1.1.0
   mustache_template: ^1.0.0+1
   recase: 3.0.0
   fixnum: ^0.10.11
+  reflectable: ^2.2.5
+  build_runner: ^1.10.4
 
 dev_dependencies:
   pedantic: ^1.9.2
-  test: ^1.15.3
+  test: ^1.15.4
