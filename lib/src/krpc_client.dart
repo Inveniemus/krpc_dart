@@ -4,8 +4,7 @@ import 'dart:typed_data';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import '../proto/krpc.pb.dart' show Request, ProcedureCall, Services, Response;
-import 'proto_handler.dart';
+import 'exceptions.dart';
 
 /// The client to connect to the kRPC server inside KSP
 ///
@@ -38,7 +37,19 @@ class KrpcClient {
     var rpcUrl = 'ws://$ip:$rpcPort/?name=$clientName';
     print('Connecting to RPC WebSocket: $rpcUrl');
     rpcChannel = IOWebSocketChannel.connect(rpcUrl);
-    rpcBroadcastStream = rpcChannel.stream.asBroadcastStream();
+    rpcBroadcastStream = rpcChannel.stream.handleError((error) {
+      throw KrpcConnectionError(
+          'Could not connect. Check ip and rpcPort values');
+    }).asBroadcastStream();
+  }
+
+  Future<void> disconnect() async {
+    if (streamChannel != null) {
+      await streamChannel.sink.close();
+    }
+    if (rpcChannel != null) {
+      await rpcChannel.sink.close();
+    }
   }
 
   /// Connect to the Stream server with connection parameter and the clientId,
@@ -47,16 +58,6 @@ class KrpcClient {
     var streamUrl = 'ws://$ip:$streamPort/?id=$clientId';
     print('Connecting to stream WebSocket: $streamUrl');
     streamChannel = IOWebSocketChannel.connect(streamUrl);
-
-    // todo: remove this
-    print('Getting the kRPC Services...');
-    var encodedServices = await rpcCall(
-        ServicesRequest().writeToBuffer());
-    print('Services available!');
-    var response = decodeResponse(encodedServices);
-    var result = response.results.first;
-    var services = Services.fromBuffer(result.value);
-    print(services.services.length);
   }
 
   /// This method sends an encoded RPC Request and wait for the Response to
@@ -67,21 +68,4 @@ class KrpcClient {
     if (encodedResponse is Uint8List) return encodedResponse;
     return null; // It cannot reach here, normally...
   }
-}
-
-/// Manually built protobuf encoded message for getting the client ID
-/// of the client in the server. It is used to open the connection to the stream
-/// server. It is available here as the library may not have been built yet.
-Uint8List getClientIdMessage() {
-  var request = Request()
-    ..calls.add(ProcedureCall()
-      ..service = 'KRPC'
-      ..procedure = 'GetClientID');
-  return request.writeToBuffer();
-}
-
-/// Create the Response object of krpc.pb.dart out of received raw data.
-/// Made very easy by the proto file generated.
-Response decodeResponse(Uint8List encodedData) {
-  return Response.fromBuffer(encodedData);
 }

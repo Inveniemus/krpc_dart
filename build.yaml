@@ -11,6 +11,7 @@ builders:
     build_extensions:
       .dummy:
         - .dart
+        - .json
     build_to: source
     auto_apply: root_package
 
