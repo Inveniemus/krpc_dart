@@ -39,7 +39,8 @@ class KrpcClient {
     rpcChannel = IOWebSocketChannel.connect(rpcUrl);
     rpcBroadcastStream = rpcChannel.stream.handleError((error) {
       throw KrpcConnectionError(
-          'Could not connect. Check ip and rpcPort values');
+          'Could not connect! '
+          'Check ip and rpcPort values (we used $ip and $rpcPort)');
     }).asBroadcastStream();
   }
 

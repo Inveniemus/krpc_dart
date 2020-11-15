@@ -1,17 +1,20 @@
 targets:
-  $default:
+  krpc_dart:
     builders:
-      krpc_dart|buildKrpcLib:
-        enabled: True
+      krpc_dart|KrpcLibBuilder:
+        options:
+          'connected': false
+          'ip': 'localhost'
+          'rpcPort': 50000
+
 
 builders:
-  buildKrpcLib:
+  KrpcLibBuilder:
     import: 'package:krpc_dart/krpc_dart.dart'
-    builder_factories: ['buildKrpcLib']
+    builder_factories: [ 'buildKrpcLib' ]
     build_extensions:
       .dummy:
-        - .dart
         - .json
+        - .dart
     build_to: source
     auto_apply: root_package
-

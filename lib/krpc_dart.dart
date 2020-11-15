@@ -4,5 +4,5 @@ import 'builder/krpc_lib_builder.dart';
 // API entry points
 export 'src/krpc_client.dart';
 
-// Library builder entry point
-Builder buildKrpcLib(BuilderOptions options) => KrpcLibBuilder();
+// Library builders entry points
+Builder buildKrpcLib(BuilderOptions options) => KrpcLibBuilder(options);
