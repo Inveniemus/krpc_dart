@@ -1,22 +1,21 @@
 import 'dart:async';
 
 import 'package:build/build.dart';
-import 'package:krpc_dart/src/proto_handler.dart';
+
+import '../src/protobuf_handler.dart';
 import '../src/krpc_client.dart';
+import 'services_builder.dart';
 
-/// This class is used automatically by build_runner to generate the kRPC
-/// API out of the Services message provided by the RPC server.
-class KrpcLibBuilder implements Builder {
+/// This class is used automatically by build_runner to generate the input.json
+/// file out of the Services message provided by the RPC server. Options need
+/// to be defined in the "build.yaml" file if required. See README.
+class KrpcServicesFetcher implements Builder {
+
   final BuilderOptions options;
-
-  KrpcLibBuilder(this.options);
+  KrpcServicesFetcher(this.options);
 
   @override
-  Map<String, List<String>> get buildExtensions {
-    return {
-      '.dummy': ['.json', '.dart']
-    };
-  }
+  Map<String, List<String>> get buildExtensions => {'.dummy': ['.json']};
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
@@ -24,7 +23,6 @@ class KrpcLibBuilder implements Builder {
         '${options.config.toString()}');
 
     if (options.config['connected']) {
-
       // 1. Connect to kRPC
       builderLog('Connecting to kRPC...');
       final client = KrpcClient(
@@ -46,13 +44,30 @@ class KrpcLibBuilder implements Builder {
       var tempAssetId = buildStep.inputId.changeExtension('.json');
       await buildStep.writeAsString(tempAssetId, servicesAsJson);
       builderLog('Temporary "input.json" file written.');
-
     } else {
-      builderLog('Using already generated "input.json"');
+      builderLog('Using the already generated "input.json" file.');
     }
   }
 }
 
+/// This class is used to build the Dart kRPC library out of the JSON file
+class KrpcLibBuilder implements Builder {
+
+  @override
+  Map<String, List<String>> get buildExtensions => {'.json': ['.dart']};
+
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+
+    builderLog('Building Services out of the JSON input file...');
+    final assetId = buildStep.inputId;
+    final jsonData = await buildStep.readAsString(assetId);
+
+    final servicesBuilder = ServicesBuilder(jsonData, log);
+    servicesBuilder.build();
+  }
+}
+
 void builderLog(String input) {
-  print('[KRPC builder]: $input');
+  log.info('\n[KRPC builder]: $input');
 }

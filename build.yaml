@@ -1,20 +1,29 @@
 targets:
   krpc_dart:
     builders:
-      krpc_dart|KrpcLibBuilder:
+      krpc_dart|KrpcServicesFetcher:
         options:
-          'connected': false
-          'ip': 'localhost'
+          'connected': true
+          'ip': '192.168.0.149'
           'rpcPort': 50000
 
-
 builders:
+  KrpcServicesFetcher:
+    import: 'package:krpc_dart/krpc_dart.dart'
+    builder_factories: [ 'fetchKrpcServices' ]
+    build_extensions:
+      .dummy:
+        - .json
+    build_to: source
+    auto_apply: root_package
+
   KrpcLibBuilder:
     import: 'package:krpc_dart/krpc_dart.dart'
     builder_factories: [ 'buildKrpcLib' ]
     build_extensions:
-      .dummy:
-        - .json
+      .json:
         - .dart
     build_to: source
     auto_apply: root_package
+    required_inputs:
+      - '.json'
