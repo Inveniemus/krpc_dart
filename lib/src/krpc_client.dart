@@ -67,6 +67,6 @@ class KrpcClient {
     rpcChannel.sink.add(encodedRequest);
     var encodedResponse = await rpcBroadcastStream.first;
     if (encodedResponse is Uint8List) return encodedResponse;
-    return null; // It cannot reach here, normally...
+    throw KrpcConnectionError('Unexpected answer from the server!');
   }
 }
