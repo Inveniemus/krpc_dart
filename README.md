@@ -30,6 +30,9 @@ protobuf format, but it may work with other versions as well.
 ## The kRPC client
 The library exposes the KrpcClient class to connect to kRPC.
 kRPC server settings:
+
 ![Server settings](media/server_settings.png)
+
 After saving the settings and starting the server, you should see:
+
 ![Server running](media/running_server.png)
