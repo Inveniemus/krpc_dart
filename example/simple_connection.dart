@@ -27,6 +27,8 @@ void main() async {
         ProtobufHandler.getProcedureResultData(statusProcedureResult);
     final krpcVersion = getVersionFromRawStatus(statusRawData);
     print('kRPC version: $krpcVersion');
+  } on KrpcConnectionError catch (e) {
+    print(e.toString());
   } on Exception catch (e) {
     print('Unhandled Exception: $e');
   }
