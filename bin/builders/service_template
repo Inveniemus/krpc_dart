@@ -1,0 +1,19 @@
+import 'dart:typed_data';
+import '../krpc_dart.dart' show KrpcClient;
+
+// Service:
+{{{documentation}}}
+class {{{library_name}}} {
+    final KrpcClient client;
+    {{{library_name}}}(this.client);
+}
+
+// Service classes:
+{{#classes}}
+class {{class_name}} {
+    final Uint8List ref;
+    {{class_name}}(this.ref);
+}
+
+{{/classes}}
+
