@@ -1,0 +1,4 @@
+ip: 192.168.0.149
+rpc: 50000
+stream: 50001
+name: default-name

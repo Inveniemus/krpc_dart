@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data' show Uint8List;
 
 import 'package:meta/meta.dart';
@@ -68,4 +69,8 @@ String encodeClientId(Uint8List rawValue) {
 
 String getVersionFromRawStatus(Uint8List data) {
   return Status.fromBuffer(data).version;
+}
+
+String getServicesJsonString(Uint8List data) {
+  return Services.fromBuffer(data).writeToJson();
 }

@@ -13,6 +13,8 @@ dependencies:
   meta: ^1.2.4
   # krpc protobuf dependency
   fixnum: ^0.10.11
+  # Services extraction script dependencies:
+  yaml: 2.2.1
 
 dev_dependencies:
   lint: ^1.5.1
