@@ -34,13 +34,14 @@ Future<void> main() async {
         ProtobufHandler.getProcedureResultData(servicesProcedureResult));
 
     print('Writing the JSON file...');
-    final outputFile = await File('./build/services.krpc.json').create();
+    final outputFile = await File('./builder/services.krpc.json').create();
     await outputFile.writeAsString(servicesString);
 
-    print('Finished!');
-    return 0;
   } on KrpcConnectionError catch (error) {
     print(error.toString());
     throw 'EXITING ON UNRECOVERABLE ERROR!';
   }
+
+  await client.disconnect();
+  print('Finished!');
 }
