@@ -2,6 +2,7 @@
 /// snake case, camel case, and so on.
 
 import 'package:recase/recase.dart';
+import '../lib/proto/krpc.pb.dart' show Type;
 
 /// For file names
 String toSnakeCase(String input) {
@@ -93,4 +94,18 @@ String parseDoc(String xmlDoc) {
   // todo: <c>
 
   return result.trim();
+}
+
+String typeAnalyzer(Type type) {
+  String result = '${type.code.name}';
+  if (type.hasName()) result += '[${type.name}]';
+  if (type.types.isNotEmpty) {
+    result += '(';
+    for (final subtype in type.types) {
+      result += typeAnalyzer(subtype);
+      result += ', ';
+    }
+    result += ')';
+  }
+  return result;
 }

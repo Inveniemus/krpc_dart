@@ -1,15 +1,23 @@
 import 'dart:typed_data';
 import '../krpc_dart.dart' show KrpcClient;
+import '../proto/krpc.pb.dart' show Status, Services;
 
 // Service:
 {{{documentation}}}
 class {{{library_name}}} {
-    final KrpcClient client;
-    {{{library_name}}}(this.client);
+  final KrpcClient client;
+  {{{library_name}}}(this.client);
+
+  // Service Procedures
+{{#service_procedures}}
+{{{procedure_dart}}}
+
+{{/service_procedures}}
 }
 
 // Service classes:
 {{#classes}}
+{{{class_documentation}}}
 class {{class_name}} {
     final Uint8List ref;
     {{class_name}}(this.ref);
@@ -17,3 +25,16 @@ class {{class_name}} {
 
 {{/classes}}
 
+// Service Enumerations
+{{#enumerations}}
+{{{enumeration_documentation}}}
+enum {{{enumeration_name}}} {
+  {{#enumeration_values}}{{{enumeration_value_name}}}, {{/enumeration_values}}
+}
+{{/enumerations}}
+
+// Service Exceptions
+{{#exceptions}}
+{{{exception_documentation}}}
+class {{{exception_name}}} implements Exception {}
+{{/exceptions}}

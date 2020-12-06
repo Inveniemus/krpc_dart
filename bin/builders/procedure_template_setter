@@ -1,0 +1,2 @@
+  {{{documentation}}}
+  Future<void> set_{{{procedure_dart_name}}}() async {}

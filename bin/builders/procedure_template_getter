@@ -1,0 +1,2 @@
+  {{{documentation}}}
+  Future<{{{return_type}}}> get {{{procedure_dart_name}}} async {}
