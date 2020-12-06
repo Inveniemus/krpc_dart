@@ -1,1 +1,1 @@
-  // {{{return_type}}} | {{{procedure_name}}} | ({{#parameters}}{{{parameter_type_code}}} {{{parameter_type_name}}} {{{parameter_name}}}, {{/parameters}})
+  // {{{return_type}}} | {{{procedure_name}}} | ({{#parameters}}{{{parameter_type}}} {{{parameter_name}}}, {{/parameters}})

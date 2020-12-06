@@ -26,8 +26,7 @@ class ProcedureBuilder {
     debugData['return_type'] = typeAnalyzer(procedure.returnType);
     debugData['parameters'] = procedure.parameters.map((parameter) {
       return {
-        'parameter_type_code': parameter.type.code.name,
-        'parameter_type_name': parameter.type.name,
+        'parameter_type': typeAnalyzer(parameter.type),
         'parameter_name': parameter.name,
       };
     });

@@ -48,8 +48,14 @@ class TypeHandler {
         dartType = type.name;
         break;
       case Type_TypeCode.EVENT:
+        dartType = 'void/*NOT IMPLEMENTED*/';
+        break;
       case Type_TypeCode.PROCEDURE_CALL:
+        dartType = 'void/*NOT IMPLEMENTED*/';
+        break;
       case Type_TypeCode.STREAM:
+        dartType = 'void/*NOT IMPLEMENTED*/';
+        break;
       case Type_TypeCode.STATUS:
         dartType = 'Status';
         break;
@@ -57,9 +63,16 @@ class TypeHandler {
         dartType = 'Services';
         break;
       case Type_TypeCode.TUPLE:
+        dartType = 'List<dynamic>';
+        break;
       case Type_TypeCode.LIST:
+        dartType = 'List<${TypeHandler(type.types[0]).dartType}>';
+        break;
       case Type_TypeCode.SET:
+        dartType = 'List<${TypeHandler(type.types[0]).dartType}>';
+        break;
       case Type_TypeCode.DICTIONARY:
+        dartType = 'Map<${TypeHandler(type.types[0]).dartType}, ${TypeHandler(type.types[1]).dartType}>';
     }
   }
 }
