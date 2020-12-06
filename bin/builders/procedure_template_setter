@@ -1,2 +1,2 @@
   {{{documentation}}}
-  Future<void> set_{{{procedure_dart_name}}}() async {}
+  Future<void> set_{{{procedure_dart_name}}}({{{parameters}}}) async {}

@@ -4,6 +4,7 @@ import 'package:mustache_template/mustache.dart';
 
 import '../../lib/proto/krpc.pb.dart' show Procedure;
 import '../utils.dart';
+import 'parameters_builder.dart';
 import 'procedure_handler.dart';
 import 'type_handler.dart';
 
@@ -46,6 +47,7 @@ class ProcedureBuilder {
     templateData['documentation'] = parseDoc(procedure.documentation);
     templateData['return_type'] = TypeHandler(procedure.returnType).dartType;
     templateData['procedure_dart_name'] = handler.dartName;
+    templateData['parameters'] = ParametersBuilder(procedure.parameters).toString();
 
     return debugTemplate.renderString(debugData) +
         '\n' +

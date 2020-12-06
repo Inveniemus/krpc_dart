@@ -20,6 +20,16 @@ class ServiceBuilder {
   String _build() {
     Map<String, dynamic> templateData = {};
 
+    templateData['imports'] = [];
+    if (service.name == 'KRPC') {
+      templateData['imports'].add({'import': "import '../proto/krpc.pb.dart' show Status, Services;"});
+    } else if (service.name == 'Drawing') {
+      templateData['imports'].add({'import': "import 'ui.dart';"});
+      templateData['imports'].add({'import': "import 'space_center.dart';"});
+    } else if (service.name == 'InfernalRobotics' || service.name == 'KerbalAlarmClock' || service.name == 'RemoteTech') {
+      templateData['imports'].add({'import': "import 'space_center.dart';"});
+    }
+
     // Service
     templateData['library_name'] = service.name;
     templateData['documentation'] = parseDoc(service.documentation);

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import '../krpc_dart.dart' show KrpcClient;
-import '../proto/krpc.pb.dart' show Status, Services;
+{{#imports}}
+{{{import}}}
+{{/imports}}
 
 // Service:
 {{{documentation}}}
