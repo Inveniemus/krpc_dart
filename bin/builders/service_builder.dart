@@ -41,6 +41,10 @@ class ServiceBuilder {
       templateData['classes'].add({
         'class_name': _class.name,
         'class_documentation': parseDoc(_class.documentation),
+        'class_procedures': service.procedures.where((procedure) {
+          return ProcedureHandler(procedure).className == _class.name;
+        }).map((procedure) =>
+            {'procedure_dart': ProcedureBuilder(procedure).toString()}),
       });
     }
 
@@ -50,8 +54,9 @@ class ServiceBuilder {
       templateData['enumerations'].add({
         'enumeration_name': enumeration.name,
         'enumeration_documentation': parseDoc(enumeration.documentation),
-        'enumeration_values': enumeration.values.map((enumeration_value) =>
-            {'enumeration_value_name': toCamelCase(enumeration_value.name)},
+        'enumeration_values': enumeration.values.map(
+          (enumeration_value) =>
+              {'enumeration_value_name': toCamelCase(enumeration_value.name)},
         ),
       });
     }

@@ -21,6 +21,11 @@ class {{{library_name}}} {
 class {{class_name}} {
     final Uint8List ref;
     {{class_name}}(this.ref);
+
+{{#class_procedures}}
+{{{procedure_dart}}}
+
+{{/class_procedures}}
 }
 
 {{/classes}}
