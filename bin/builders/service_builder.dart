@@ -22,11 +22,14 @@ class ServiceBuilder {
 
     templateData['imports'] = [];
     if (service.name == 'KRPC') {
-      templateData['imports'].add({'import': "import '../proto/krpc.pb.dart' show Status, Services;"});
+      templateData['imports'].add(
+          {'import': "import '../proto/krpc.pb.dart' show Status, Services;"});
     } else if (service.name == 'Drawing') {
       templateData['imports'].add({'import': "import 'ui.dart';"});
       templateData['imports'].add({'import': "import 'space_center.dart';"});
-    } else if (service.name == 'InfernalRobotics' || service.name == 'KerbalAlarmClock' || service.name == 'RemoteTech') {
+    } else if (service.name == 'InfernalRobotics' ||
+        service.name == 'KerbalAlarmClock' ||
+        service.name == 'RemoteTech') {
       templateData['imports'].add({'import': "import 'space_center.dart';"});
     }
 
@@ -37,7 +40,7 @@ class ServiceBuilder {
     // Service Procedures
     templateData['service_procedures'] = [];
     for (final procedure in service.procedures) {
-      final builder = ProcedureBuilder(procedure);
+      final builder = ProcedureBuilder(procedure, service.name);
       if (builder.handler.isService) {
         templateData['service_procedures'].add({
           'procedure_dart': builder.toString(),
@@ -53,8 +56,10 @@ class ServiceBuilder {
         'class_documentation': parseDoc(_class.documentation),
         'class_procedures': service.procedures.where((procedure) {
           return ProcedureHandler(procedure).className == _class.name;
-        }).map((procedure) =>
-            {'procedure_dart': ProcedureBuilder(procedure).toString()}),
+        }).map((procedure) => {
+              'procedure_dart':
+                  ProcedureBuilder(procedure, service.name).toString()
+            }),
       });
     }
 

@@ -1,17 +1,23 @@
 import 'package:krpc_dart/krpc_dart.dart';
 
+/// This script gets the kRPC version out of the server, without the need of
+/// building the API. Manually change the KrpcClient parameter to match your
+/// configuration.
 void main() async {
-  var client = KrpcClient(ip: '192.168.0.149');
+  var client = KrpcClient(
+      ip: '192.168.0.149',
+      rpcPort: 50000,
+      streamPort: 50001,
+      clientName: 'client');
 
   try {
     await client.connectRPC();
+    print('Connected!');
   } on KrpcConnectionError catch (e) {
     print(e.toString());
   } on Exception catch (e) {
     print(e.toString());
   }
-
-  print('Connected!');
 
   try {
     // 1. Encode the Request to get the server status and send it

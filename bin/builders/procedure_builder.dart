@@ -12,8 +12,10 @@ import 'type_handler.dart';
 class ProcedureBuilder {
   final Procedure procedure;
   final ProcedureHandler handler;
+  final String serviceName;
 
-  ProcedureBuilder(this.procedure) : handler = ProcedureHandler(procedure);
+  ProcedureBuilder(this.procedure, this.serviceName)
+      : handler = ProcedureHandler(procedure);
 
   String _build() {
     Map<String, dynamic> templateData = {};
@@ -45,9 +47,16 @@ class ProcedureBuilder {
     }
 
     templateData['documentation'] = parseDoc(procedure.documentation);
-    templateData['return_type'] = TypeHandler(procedure.returnType).dartType;
+    templateData['return_type_dart'] = TypeHandler(procedure.returnType).dartType;
     templateData['procedure_dart_name'] = handler.dartName;
-    templateData['parameters'] = ParametersBuilder(procedure.parameters).toString();
+    templateData['parameters'] =
+        ParametersBuilder(procedure.parameters, isClass: handler.isClass).toDartString();
+
+    templateData['procedure_metadata'] =
+        "'service_name': '${serviceName}', 'procedure_name': '${handler.fullKrpcName}',";
+    templateData['return_type_metadata'] = "'return_type': ${TypeHandler(procedure.returnType).metadataString},";
+    templateData['parameters_metadata'] =
+        ParametersBuilder(procedure.parameters, isClass: handler.isClass).toMetaDataString();
 
     return debugTemplate.renderString(debugData) +
         '\n' +

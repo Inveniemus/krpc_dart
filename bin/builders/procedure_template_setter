@@ -1,2 +1,8 @@
   {{{documentation}}}
-  Future<void> set_{{{procedure_dart_name}}}({{{parameters}}}) async {}
+  Future<void> set_{{{procedure_dart_name}}}({{{parameters}}}) async {
+      final handler = ProtobufHandler({
+        {{{procedure_metadata}}}
+        'parameters': [{{{parameters_metadata}}}]
+      });
+      return handler.decode(await client.rpcCall(handler.encode()));
+  }

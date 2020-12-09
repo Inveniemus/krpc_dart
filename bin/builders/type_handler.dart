@@ -5,11 +5,13 @@ import '../../lib/proto/krpc.pb.dart' show Type, Type_TypeCode;
 class TypeHandler {
   final Type type;
   String dartType;
+  String metadataString = "{'code': ";
   TypeHandler(this.type) {
     _analyze();
   }
 
   void _analyze() {
+    metadataString += "'${type.code.toString().split('.').last}'";
     switch(type.code) {
       case Type_TypeCode.NONE:
         dartType = 'void';
@@ -74,6 +76,7 @@ class TypeHandler {
       case Type_TypeCode.DICTIONARY:
         dartType = 'Map<${TypeHandler(type.types[0]).dartType}, ${TypeHandler(type.types[1]).dartType}>';
     }
+    metadataString += '}';
   }
 }
 

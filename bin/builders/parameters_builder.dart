@@ -1,12 +1,14 @@
+import 'dart:typed_data';
+
 import '../../lib/proto/krpc.pb.dart';
-import '../utils.dart';
 import 'type_handler.dart';
 
 class ParametersBuilder {
   final List<Parameter> parameters;
-  ParametersBuilder(this.parameters);
+  final bool isClass;
+  ParametersBuilder(this.parameters, {this.isClass = false});
 
-  String _build() {
+  String toDartString() {
     String result = '';
     for (final parameter in parameters) {
       // todo: default value parameters
@@ -20,6 +22,10 @@ class ParametersBuilder {
     return result;
   }
 
-  @override
-  String toString() => _build();
+  String toMetaDataString() {
+    String result = '';
+    // If classRef is not null:
+    if (isClass) result += "{'class_ref': ref}, ";
+    return result;
+  }
 }

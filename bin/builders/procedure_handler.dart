@@ -25,6 +25,8 @@ class ProcedureHandler {
 
   String get dartName => toCamelCase(krpcName);
 
+  String get fullKrpcName => procedure.name;
+
   bool get isStatic => nature == ProcedureNature.classStaticMethod;
 
   bool get isGetter =>
@@ -39,6 +41,8 @@ class ProcedureHandler {
       nature == ProcedureNature.serviceProcedure ||
       nature == ProcedureNature.serviceSetter ||
       nature == ProcedureNature.serviceGetter;
+
+  bool get isClass => !isService;
 
   void _analyze() {
     RegExp serviceGetterRE = RegExp(r"get_(\S+)");
