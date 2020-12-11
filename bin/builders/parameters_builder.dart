@@ -24,8 +24,13 @@ class ParametersBuilder {
 
   String toMetaDataString() {
     String result = '';
+    int position = 0;
     // If classRef is not null:
-    if (isClass) result += "{'class_ref': ref}, ";
+    if (isClass) {
+      result += "{'position': 0, 'class_ref': ref}, ";
+      position++;
+    }
+
     return result;
   }
 }

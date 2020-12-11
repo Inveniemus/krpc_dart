@@ -44,9 +44,11 @@ class TypeHandler {
         dartType = 'Uint8List';
         break;
       case Type_TypeCode.CLASS:
+        metadataString += ", 'name': '${type.name}', 'service': '${type.service}'";
         dartType = type.name;
         break;
       case Type_TypeCode.ENUMERATION:
+        metadataString += ", 'name': '${type.name}', 'service': '${type.service}'";
         dartType = type.name;
         break;
       case Type_TypeCode.EVENT:

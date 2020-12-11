@@ -1,5 +1,6 @@
 import 'dart:typed_data';
-import '../krpc_dart.dart' show KrpcClient, ProtobufHandler;
+import '../src/krpc_client.dart' show KrpcClient;
+import '../src/protobuf_handler.dart' show ProtobufHandler;
 {{#imports}}
 {{{import}}}
 {{/imports}}
@@ -18,6 +19,19 @@ class {{{library_name}}} {
 {{/service_procedures}}
 }
 
+// Service classes builder:
+dynamic get{{{library_name}}}Class(String className, Uint8List reference) {
+  switch(className) {
+    {{#classes}}
+    case '{{class_name}}':
+      return {{class_name}}(reference);
+      break;
+    {{/classes}}
+    default:
+      throw Exception('Unknown KRPC class $className');
+  }
+}
+
 // Service classes:
 {{#classes}}
 {{{class_documentation}}}
@@ -32,6 +46,20 @@ class {{class_name}} {
 }
 
 {{/classes}}
+
+// Service enumerations builder:
+dynamic get{{{library_name}}}Enum(String enumName, int index) {
+  switch(enumName) {
+    {{#enumerations}}
+    case '{{{enumeration_name}}}':
+      return {{{enumeration_name}}}.values[index];
+      break;
+    {{/enumerations}}
+    default:
+      throw Exception('Unknown KRPC enumeration $enumName');
+  }
+}
+
 
 // Service Enumerations
 {{#enumerations}}

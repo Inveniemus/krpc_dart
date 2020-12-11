@@ -7,5 +7,9 @@ class ArgumentEncoder {
   Argument encode() {
     final argument = Argument();
     argument.position = parameterMetaData['position'];
+    if (parameterMetaData.containsKey('class_ref')) {
+      argument.value = parameterMetaData['class_ref'];
+    }
+    return argument;
   }
 }

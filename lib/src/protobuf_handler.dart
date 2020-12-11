@@ -4,6 +4,7 @@ import 'dart:typed_data' show Uint8List;
 import 'package:meta/meta.dart';
 import 'package:protobuf/protobuf.dart';
 
+import '../api/services_api.dart';
 import '../proto/krpc.pb.dart'
     show Request, ProcedureCall, Services, Response, ProcedureResult, Status;
 import 'codecs/argument_encoder.dart';
@@ -85,12 +86,13 @@ class ProtobufHandler {
     }
   }
 
-  static dynamic handleReturnData(Map<String, dynamic> returnTypeData, Uint8List data) {
-    print ('Handling: $returnTypeData - $data');
+  static dynamic handleReturnData(
+      Map<String, dynamic> returnTypeData, Uint8List data) {
+    print('Handling: $returnTypeData - $data');
 
     final buffer = CodedBufferReader(data);
 
-    switch(returnTypeData['code']) {
+    switch (returnTypeData['code']) {
       case 'NONE':
         return null;
         break;
@@ -122,10 +124,11 @@ class ProtobufHandler {
         return buffer.readBytes();
         break;
       case 'CLASS':
-        // todo
+        return getClass(returnTypeData['service'], returnTypeData['name'], data);
         break;
       case 'ENUMERATION':
-        // todo
+        final index = (data[0] / 2).round(); // <= For whatever reason...
+        return getEnum(returnTypeData['service'], returnTypeData['name'], index);
         break;
       case 'EVENT':
         // todo
@@ -155,7 +158,7 @@ class ProtobufHandler {
         // todo
         break;
     }
-    
+
     return null;
   }
 }
