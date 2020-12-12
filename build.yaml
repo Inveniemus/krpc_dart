@@ -1,8 +1,0 @@
-targets:
-  $default:
-    builders:
-      reflectable:
-        generate_for:
-          - lib/api/*.dart
-        options:
-          formatted: true

@@ -4,6 +4,8 @@ import 'package:krpc_dart/krpc_dart.dart';
 import 'package:krpc_dart/api/space_center.dart';
 import 'package:krpc_dart/api/krpc.dart';
 
+/// This script goes through various services, setter and getters i.o.t. check
+/// features.
 void main() async {
 
   final client = KrpcClient(ip: '192.168.0.149');
@@ -29,6 +31,8 @@ void main() async {
   await krpcService.set_paused(true);
   sleep(Duration(seconds: 1));
   await krpcService.set_paused(false);
+
+  await vessel.set_name('NewName!');
 
   client.disconnect();
 }

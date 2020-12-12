@@ -70,7 +70,6 @@ class ProtobufHandler {
   static List<ProcedureResult> responseResultsBuilder(Uint8List data) {
     final response = Response.fromBuffer(data);
     if (response.hasError()) {
-      // todo: Error handling of response errors sent by the kRPC server
       throw KrpcServerError(response.error.service, response.error.name,
           response.error.description, response.error.stackTrace);
     } else {
@@ -80,7 +79,6 @@ class ProtobufHandler {
 
   static Uint8List getProcedureResultData(ProcedureResult result) {
     if (result.hasError()) {
-      // todo: Error handling of result errors sent by the kRPC server
       throw KrpcServerError(result.error.service, result.error.name,
           result.error.description, result.error.stackTrace);
     } else {
@@ -90,7 +88,6 @@ class ProtobufHandler {
 
   static dynamic handleReturnData(
       Map<String, dynamic> returnTypeData, Uint8List data) {
-
     if (returnTypeData == null) return;
 
     print('Handling: $returnTypeData - $data');
@@ -139,12 +136,15 @@ class ProtobufHandler {
         break;
       case 'EVENT':
         // todo
+        throw UnimplementedError();
         break;
       case 'PROCEDURE_CALL':
         // todo
+        throw UnimplementedError();
         break;
       case 'STREAM':
         // todo
+        throw UnimplementedError();
         break;
       case 'STATUS':
         return Status.fromBuffer(data);
@@ -154,15 +154,19 @@ class ProtobufHandler {
         break;
       case 'TUPLE':
         // todo
+        throw UnimplementedError();
         break;
       case 'LIST':
         // todo
+        throw UnimplementedError();
         break;
       case 'SET':
         // todo
+        throw UnimplementedError();
         break;
       case 'DICTIONARY':
         // todo
+        throw UnimplementedError();
         break;
     }
 

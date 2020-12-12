@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:protobuf/protobuf.dart';
 
 import '../../proto/krpc.pb.dart' show Argument;
@@ -20,46 +18,50 @@ class ArgumentEncoder {
         // NOT RELEVANT
         break;
       case 'DOUBLE':
-        // todo
+        writer.writeField(1, PbFieldType.OD, parameterMetaData['name']);
         break;
       case 'FLOAT':
-        // todo
+        writer.writeField(1, PbFieldType.OF, parameterMetaData['name']);
         break;
       case 'SINT32':
-        // todo
+        writer.writeField(1, PbFieldType.OS3, parameterMetaData['name']);
         break;
       case 'SINT64':
-        // todo
+        writer.writeField(1, PbFieldType.OS6, parameterMetaData['name']);
         break;
       case 'UINT32':
-        // todo
+        writer.writeField(1, PbFieldType.OU3, parameterMetaData['name']);
         break;
       case 'UINT64':
-        // todo
+        writer.writeField(1, PbFieldType.OU6, parameterMetaData['name']);
         break;
       case 'BOOL':
         writer.writeField(1, PbFieldType.OB, parameterMetaData['name']);
         break;
       case 'STRING':
-        // todo
+        writer.writeField(1, PbFieldType.OS, parameterMetaData['name']);
         break;
       case 'BYTES':
-        // todo
+        writer.writeField(1, PbFieldType.OY, parameterMetaData['name']);
         break;
       case 'CLASS':
         writer.writeField(1, PbFieldType.OY, parameterMetaData['name']);
         break;
       case 'ENUMERATION':
-        // todo
+      // todo
+        throw UnimplementedError();
         break;
       case 'EVENT':
-        // todo
+      // todo
+        throw UnimplementedError();
         break;
       case 'PROCEDURE_CALL':
-        // todo
+      // todo
+        throw UnimplementedError();
         break;
       case 'STREAM':
-        // todo
+      // todo
+        throw UnimplementedError();
         break;
       case 'STATUS':
         // NOT RELEVANT
@@ -68,16 +70,20 @@ class ArgumentEncoder {
         // NOT RELEVANT
         break;
       case 'TUPLE':
-        // todo
+      // todo
+        throw UnimplementedError();
         break;
       case 'LIST':
-        // todo
+      // todo
+        throw UnimplementedError();
         break;
       case 'SET':
-        // todo
+      // todo
+        throw UnimplementedError();
         break;
       case 'DICTIONARY':
         // todo
+        throw UnimplementedError();
         break;
     }
 
