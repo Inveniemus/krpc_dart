@@ -23,7 +23,7 @@ class ServiceBuilder {
     templateData['imports'] = [];
     if (service.name == 'KRPC') {
       templateData['imports'].add(
-          {'import': "import '../proto/krpc.pb.dart' show Status, Services;"});
+          {'import': "import '../proto/krpc.pb.dart' show Status, Services, ProcedureCall, Event;"});
     } else if (service.name == 'Drawing') {
       templateData['imports'].add({'import': "import 'ui.dart';"});
       templateData['imports'].add({'import': "import 'space_center.dart';"});

@@ -24,13 +24,11 @@ class ParametersBuilder {
 
   String toMetaDataString() {
     String result = '';
-    int position = 0;
-    // If classRef is not null:
-    if (isClass) {
-      result += "{'position': 0, 'class_ref': ref}, ";
-      position++;
+    for (int i = 0; i < parameters.length; i++) {
+      String nameValue = parameters[i].name;
+      if (nameValue == 'this') nameValue = 'ref';
+      result += "{'position': $i, 'type_code': '${parameters[i].type.code}', 'type_name': '${parameters[i].type.name}', 'name': $nameValue}, ";
     }
-
     return result;
   }
 }

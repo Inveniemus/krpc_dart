@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:krpc_dart/krpc_dart.dart';
 import 'package:krpc_dart/api/space_center.dart';
 import 'package:krpc_dart/api/krpc.dart';
@@ -24,6 +26,9 @@ void main() async {
   print(await vessel.name);
   print((await krpcService.getStatus()).version);
 
+  await krpcService.set_paused(true);
+  sleep(Duration(seconds: 1));
+  await krpcService.set_paused(false);
 
   client.disconnect();
 }

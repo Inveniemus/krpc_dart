@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data' show Uint8List;
 
+import 'package:krpc_dart/krpc_dart.dart';
 import 'package:meta/meta.dart';
 import 'package:protobuf/protobuf.dart';
 
@@ -70,8 +71,8 @@ class ProtobufHandler {
     final response = Response.fromBuffer(data);
     if (response.hasError()) {
       // todo: Error handling of response errors sent by the kRPC server
-      throw Exception(
-          'kRPC server error on request received (NOT IMPLEMENTED)');
+      throw KrpcServerError(response.error.service, response.error.name,
+          response.error.description, response.error.stackTrace);
     } else {
       return response.results;
     }
@@ -80,14 +81,18 @@ class ProtobufHandler {
   static Uint8List getProcedureResultData(ProcedureResult result) {
     if (result.hasError()) {
       // todo: Error handling of result errors sent by the kRPC server
-      throw Exception('kRPC server error on result received (NOT IMPLEMENTED)');
+      throw KrpcServerError(result.error.service, result.error.name,
+          result.error.description, result.error.stackTrace);
     } else {
-      return result.value;
+      return Uint8List.fromList(result.value);
     }
   }
 
   static dynamic handleReturnData(
       Map<String, dynamic> returnTypeData, Uint8List data) {
+
+    if (returnTypeData == null) return;
+
     print('Handling: $returnTypeData - $data');
 
     final buffer = CodedBufferReader(data);
@@ -124,11 +129,13 @@ class ProtobufHandler {
         return buffer.readBytes();
         break;
       case 'CLASS':
-        return getClass(returnTypeData['service'], returnTypeData['name'], data);
+        return getClass(
+            returnTypeData['service'], returnTypeData['name'], data);
         break;
       case 'ENUMERATION':
         final index = (data[0] / 2).round(); // <= For whatever reason...
-        return getEnum(returnTypeData['service'], returnTypeData['name'], index);
+        return getEnum(
+            returnTypeData['service'], returnTypeData['name'], index);
         break;
       case 'EVENT':
         // todo

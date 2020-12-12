@@ -52,13 +52,13 @@ class TypeHandler {
         dartType = type.name;
         break;
       case Type_TypeCode.EVENT:
-        dartType = 'void/*NOT IMPLEMENTED*/';
+        dartType = 'Event';
         break;
       case Type_TypeCode.PROCEDURE_CALL:
-        dartType = 'void/*NOT IMPLEMENTED*/';
+        dartType = 'ProcedureCall';
         break;
       case Type_TypeCode.STREAM:
-        dartType = 'void/*NOT IMPLEMENTED*/';
+        dartType = 'Stream';
         break;
       case Type_TypeCode.STATUS:
         dartType = 'Status';
