@@ -1,6 +1,6 @@
 name: krpc_dart
 description: A library to interact with kRPC internal server of Kerbal Space Program! Use it to develop Dart script or Flutter apps!
-version: 0.2.0
+version: 0.2.0+1
 
 repository: 'https://github.com/Inveniemus/krpc_dart/tree/develop_v0.2'
 
@@ -16,11 +16,8 @@ dependencies:
   # Services extraction script dependencies:
   yaml: ^2.2.1
   # Builder dependencies
-  build: ^1.5.2
   recase: ^3.0.1
   mustache_template: ^1.0.0+1
 
 dev_dependencies:
   test: ^1.15.7
-  # Builder dependencies
-  build_runner: ^1.10.9

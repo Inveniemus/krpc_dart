@@ -13,10 +13,10 @@ import 'exceptions.dart';
 /// It has to be referenced by the library generated objects, in order to call
 /// their methods (a.k.a as Procedure in kRPC nomenclature).
 class KrpcClient {
-  final String ip;
-  final int rpcPort;
-  final int streamPort;
-  final String clientName;
+  String _ip;
+  int _rpcPort;
+  int _streamPort;
+  String _clientName;
 
   WebSocketChannel rpcChannel;
   Stream rpcBroadcastStream;
@@ -27,20 +27,34 @@ class KrpcClient {
       int rpcPort = 50000,
       int streamPort = 50001,
       String clientName = 'krpc-dart'})
-      : ip = ip,
-        rpcPort = rpcPort,
-        streamPort = streamPort,
-        clientName = clientName;
+      : _ip = ip,
+        _rpcPort = rpcPort,
+        _streamPort = streamPort,
+        _clientName = clientName;
+
+  void set ip(String input) {
+    if (input == 'localhost') _ip = input;
+    final ipRE = RegExp(r'\d+\.\d+\.\d+\.\d+');
+    if (ipRE.hasMatch(input)) {
+      _ip = input;
+    } else {
+      // Nothing. _ip is unchanged in the case of a wrong value.
+    }
+  }
+
+  void set rpcPort(int number) => _rpcPort = number;
+  void set streamPort(int number) => _streamPort = number;
+  void set clientName(String input) => _clientName = input;
 
   /// Connect to the RPC server with connection parameter.
   Future<void> connectRPC() async {
-    var rpcUrl = 'ws://$ip:$rpcPort/?name=$clientName';
+    var rpcUrl = 'ws://$_ip:$_rpcPort/?name=$_clientName';
     print('Connecting to RPC WebSocket: $rpcUrl');
     rpcChannel = IOWebSocketChannel.connect(rpcUrl);
     rpcBroadcastStream = rpcChannel.stream.handleError((error) {
       throw KrpcConnectionError(
           'Could not connect! '
-          'Check ip and rpcPort values (we used $ip and $rpcPort)');
+          'Check ip and rpcPort values (we used $_ip and $_rpcPort)');
     }).asBroadcastStream();
   }
 
@@ -56,7 +70,7 @@ class KrpcClient {
   /// Connect to the Stream server with connection parameter and the clientId,
   /// provided by the server.
   Future<void> connectStream(String clientId) async {
-    var streamUrl = 'ws://$ip:$streamPort/?id=$clientId';
+    var streamUrl = 'ws://$_ip:$_streamPort/?id=$clientId';
     print('Connecting to stream WebSocket: $streamUrl');
     streamChannel = IOWebSocketChannel.connect(streamUrl);
   }
