@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:krpc_dart/krpc_dart.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -48,7 +49,7 @@ class KrpcClient {
 
   /// Connect to the RPC server with connection parameter.
   Future<void> connectRPC() async {
-    var rpcUrl = 'ws://$_ip:$_rpcPort/?name=$_clientName';
+    final rpcUrl = 'ws://$_ip:$_rpcPort/?name=$_clientName';
     print('Connecting to RPC WebSocket: $rpcUrl');
     rpcChannel = IOWebSocketChannel.connect(rpcUrl);
     rpcBroadcastStream = rpcChannel.stream.handleError((error) {
@@ -56,6 +57,7 @@ class KrpcClient {
           'Could not connect! '
           'Check ip and rpcPort values (we used $_ip and $_rpcPort)');
     }).asBroadcastStream();
+    await checkServerStatus();
   }
 
   Future<void> disconnect() async {
@@ -82,5 +84,11 @@ class KrpcClient {
     var encodedResponse = await rpcBroadcastStream.first;
     if (encodedResponse is Uint8List) return encodedResponse;
     throw KrpcConnectionError('Unexpected answer from the server!');
+  }
+
+  /// This method tests the web channel upon connection request by sending a
+  /// kRPC server status request.
+  Future<void> checkServerStatus() async {
+    await rpcCall(ProtobufHandler.encodeStatusRequest());
   }
 }

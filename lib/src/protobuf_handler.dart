@@ -35,6 +35,7 @@ class ProtobufHandler {
   }
 
   // Static methods (can be used without building the API) _____________________
+
   /// Hard-coded Request used by the builder, while the API may not already be
   /// available.
   static Uint8List encodeServicesRequest() {
@@ -42,6 +43,16 @@ class ProtobufHandler {
       ..calls.add(ProcedureCall()
         ..service = 'KRPC'
         ..procedure = 'GetServices');
+    return request.writeToBuffer();
+  }
+
+  /// Hard-coded Request used by the builder, while the API may not already be
+  /// available.
+  static Uint8List encodeStatusRequest() {
+    var request = Request()
+      ..calls.add(ProcedureCall()
+        ..service = 'KRPC'
+        ..procedure = 'GetStatus');
     return request.writeToBuffer();
   }
 
