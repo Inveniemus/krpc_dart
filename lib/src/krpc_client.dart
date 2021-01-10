@@ -23,11 +23,12 @@ class KrpcClient {
   Stream rpcBroadcastStream;
   WebSocketChannel streamChannel;
 
-  KrpcClient(
-      {String ip = 'localhost',
-      int rpcPort = 50000,
-      int streamPort = 50001,
-      String clientName = 'krpc-dart'})
+  Stream<KrpcClientStatus> statusStream;
+
+  KrpcClient({String ip = 'localhost',
+    int rpcPort = 50000,
+    int streamPort = 50001,
+    String clientName = 'krpc-dart'})
       : _ip = ip,
         _rpcPort = rpcPort,
         _streamPort = streamPort,
@@ -44,7 +45,9 @@ class KrpcClient {
   }
 
   void set rpcPort(int number) => _rpcPort = number;
+
   void set streamPort(int number) => _streamPort = number;
+
   void set clientName(String input) => _clientName = input;
 
   /// Connect to the RPC server with connection parameter.
@@ -55,8 +58,15 @@ class KrpcClient {
     rpcBroadcastStream = rpcChannel.stream.handleError((error) {
       throw KrpcConnectionError(
           'Could not connect! '
-          'Check ip and rpcPort values (we used $_ip and $_rpcPort)');
+              'Check ip and rpcPort values (we used $_ip and $_rpcPort)');
     }).asBroadcastStream();
+    statusStream = rpcChannel.stream.transform(
+        StreamTransformer<Uint8List, KrpcClientStatus>.fromHandlers(
+            handleData: (data, sink) => sink.add(KrpcClientStatus.connected),
+            handleDone: (sink) => sink.add(KrpcClientStatus.disconnected),
+            handleError: (error, stackTrace, sink) =>
+                sink.add(KrpcClientStatus.error))
+    );
     await checkServerStatus();
   }
 
@@ -91,4 +101,10 @@ class KrpcClient {
   Future<void> checkServerStatus() async {
     await rpcCall(ProtobufHandler.encodeStatusRequest());
   }
+}
+
+enum KrpcClientStatus {
+  disconnected,
+  connected,
+  error
 }
