@@ -23,7 +23,7 @@ class KrpcClient {
   Stream rpcBroadcastStream;
   WebSocketChannel streamChannel;
 
-  Stream<KrpcClientStatus> statusStream;
+  KrpcClientStatus status = KrpcClientStatus.disconnected;
 
   KrpcClient({String ip = 'localhost',
     int rpcPort = 50000,
@@ -44,6 +44,8 @@ class KrpcClient {
     }
   }
 
+  String get rpcUrl => 'ws://$_ip:$_rpcPort/?name=$_clientName';
+
   void set rpcPort(int number) => _rpcPort = number;
 
   void set streamPort(int number) => _streamPort = number;
@@ -52,24 +54,20 @@ class KrpcClient {
 
   /// Connect to the RPC server with connection parameter.
   Future<void> connectRPC() async {
-    final rpcUrl = 'ws://$_ip:$_rpcPort/?name=$_clientName';
+    status = KrpcClientStatus.connecting;
     print('Connecting to RPC WebSocket: $rpcUrl');
     rpcChannel = IOWebSocketChannel.connect(rpcUrl);
     rpcBroadcastStream = rpcChannel.stream.handleError((error) {
+      status = KrpcClientStatus.error;
       throw KrpcConnectionError(
           'Could not connect! '
               'Check ip and rpcPort values (we used $_ip and $_rpcPort)');
     }).asBroadcastStream();
-    statusStream = rpcChannel.stream.transform(
-        StreamTransformer<Uint8List, KrpcClientStatus>.fromHandlers(
-            handleData: (data, sink) => sink.add(KrpcClientStatus.connected),
-            handleDone: (sink) => sink.add(KrpcClientStatus.disconnected),
-            handleError: (error, stackTrace, sink) =>
-                sink.add(KrpcClientStatus.error))
-    );
     await checkServerStatus();
+    status = KrpcClientStatus.connected;
   }
 
+  /// Disconnects everything, i.e. RPC and stream connections.
   Future<void> disconnect() async {
     if (streamChannel != null) {
       await streamChannel.sink.close();
@@ -77,6 +75,7 @@ class KrpcClient {
     if (rpcChannel != null) {
       await rpcChannel.sink.close();
     }
+    status = KrpcClientStatus.disconnected;
   }
 
   /// Connect to the Stream server with connection parameter and the clientId,
@@ -101,10 +100,16 @@ class KrpcClient {
   Future<void> checkServerStatus() async {
     await rpcCall(ProtobufHandler.encodeStatusRequest());
   }
+
+  // TESTING STUFF______________________________________________________________
+  void replaceRpcChannel(WebSocketChannel newRpcChannel) {
+    rpcChannel = newRpcChannel;
+  }
 }
 
 enum KrpcClientStatus {
   disconnected,
+  connecting,
   connected,
   error
 }
