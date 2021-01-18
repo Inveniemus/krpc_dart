@@ -12,7 +12,7 @@ void main() {
 
     group('Default constructor', () {
       test('Default constructor shall set "localhost" as ip, 50000 as RPC port and "krpc-dart" as client name.', () {
-        expect(defaultClient.rpcUrl, 'ws://localhost:50000/?name=krpc-dart');
+        expect(defaultClient.websocketRpcUrl, 'ws://localhost:50000/?name=krpc-dart');
       });
 
       test('Default constructor shall set 50001 as stream port.', () {
