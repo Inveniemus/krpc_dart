@@ -1,44 +1,30 @@
-import 'package:krpc_dart/krpc_dart.dart';
+import 'dart:io';
 
-/// This script gets the kRPC version out of the server, without the need of
-/// building the API. Manually change the KrpcClient parameter to match your
-/// configuration.
+import 'package:krpc_dart/client_bloc/krpc_client_bloc.dart';
+import 'package:krpc_dart/domain/connection/connection_parameters.dart';
+import 'package:krpc_dart/proto/krpc.pb.dart';
+import 'package:krpc_dart/proto/krpc.pbserver.dart';
+
 void main() async {
-  var client = KrpcClient(
-      ip: '192.168.0.149',
-      rpcPort: 50000,
-      streamPort: 50001,
-      clientName: 'client');
+  final connectionBloc = KrpcClientBloc();
+  connectionBloc.add(WebSocketChannelConnectionRequest(ConnectionParameters()..ip = '192.168.0.150'..port = 50000..clientName = 'Test'));
+  final statusRequest = Request();
+  statusRequest.calls
+    ..add(ProcedureCall()..service = 'SpaceCenters'..procedure = 'get_ActiveVessel')
+    ..add(ProcedureCall()..service = 'SpaceCenter'..procedure = 'get_ActiveVessel')
+    ..add(ProcedureCall()..service = 'SpaceCenter'..procedure = 'get_Vessels')
+    ..add(ProcedureCall()..service = 'SpaceCenter'..procedure = 'get_Vessel')
+    ..add(ProcedureCall()..service = 'SpaceCenter'..procedure = 'get_Bodies');
+  connectionBloc.add(RpcRequest(statusRequest.writeToBuffer()));
+  connectionBloc.stream.listen((state) {
+    if (state is KrpcClientRpcResponse) {
+      final response = Response.fromBuffer(state.data);
+      print(response);
+    }
+  });
 
-  try {
-    await client.connectRPC();
-    print('Connected!');
-  } on KrpcConnectionError catch (e) {
-    print(e.toString());
-  } on Exception catch (e) {
-    print(e.toString());
-  }
 
-  try {
-    // 1. Encode the Request to get the server status and send it
-    final rawResponse = await client.rpcCall(ProtobufHandler.encodeRequest([
-      ProtobufHandler.procedureCallBuilder(
-          service: 'KRPC', procedure: 'GetStatus')
-    ]));
-
-    // 2. Decode the Response to get the Status information as JSON
-    final statusProcedureResult =
-        ProtobufHandler.responseResultsBuilder(rawResponse).first;
-    final statusRawData =
-        ProtobufHandler.getProcedureResultData(statusProcedureResult);
-    final krpcVersion = getVersionFromRawStatus(statusRawData);
-    print('kRPC version: $krpcVersion');
-  } on KrpcConnectionError catch (e) {
-    print(e.toString());
-  } on Exception catch (e) {
-    print('Unhandled Exception: $e');
-  }
-
-  await client.disconnect();
-  print('Disconnected!');
+  sleep(Duration(seconds: 1));
+  connectionBloc.add(DisconnectRequest());
+  return;
 }

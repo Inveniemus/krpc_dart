@@ -11,7 +11,7 @@ class TypeHandler {
   }
 
   void _analyze() {
-    metadataString += "'${type.code.toString().split('.').last}'";
+    metadataString += "${type.code.toString().split('.').last}";
     switch(type.code) {
       case Type_TypeCode.NONE:
         dartType = 'void';
@@ -73,7 +73,7 @@ class TypeHandler {
         dartType = 'List<${TypeHandler(type.types[0]).dartType}>';
         break;
       case Type_TypeCode.SET:
-        dartType = 'List<${TypeHandler(type.types[0]).dartType}>';
+        dartType = 'Set<${TypeHandler(type.types[0]).dartType}>';
         break;
       case Type_TypeCode.DICTIONARY:
         dartType = 'Map<${TypeHandler(type.types[0]).dartType}, ${TypeHandler(type.types[1]).dartType}>';

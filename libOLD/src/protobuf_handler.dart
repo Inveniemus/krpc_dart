@@ -7,7 +7,7 @@ import 'package:protobuf/protobuf.dart';
 
 import '../api/services_api.dart';
 import '../proto/krpc.pb.dart'
-    show Request, ProcedureCall, Services, Response, ProcedureResult, Status;
+    show Request, ProcedureCall, Services, Response, ProcedureResult, Status, List_;
 import 'codecs/argument_encoder.dart';
 
 /// This class handles protobuf messages, mainly by encoding or decoding them.
@@ -168,7 +168,12 @@ class ProtobufHandler {
         throw UnimplementedError();
         break;
       case 'LIST':
-        // todo
+        /*
+        todo: deal with subtypes in generation
+        List<dynamic> items;
+        final dataList = List_.fromBuffer(data);
+        dataList.items.forEach((element) => items.add(handleReturnData(returnTypeData, data)));
+         */
         throw UnimplementedError();
         break;
       case 'SET':

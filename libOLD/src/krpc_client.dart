@@ -42,7 +42,9 @@ class KrpcClient {
   String get websocketRpcUrl => 'ws://$ip:$rpcPort/?name=$clientName';
 
   /// Connect to the RPC server with connection parameters.
-  Future<void> connectRPC() async => _connectRPC();
+  Future<void> connectRPC() async => protocol == ConnectionProtocol.websocket
+      ? _connectRpcUsingWebSocket()
+      : _connectRpcUsingTcp();
 
   /// Connect to the Stream server with connection parameter and the clientId,
   /// provided by the server.
@@ -51,17 +53,12 @@ class KrpcClient {
   /// Disconnects everything, i.e. RPC and stream connections.
   Future<void> disconnect() async => _disconnect();
 
-  /// This method sends an encoded RPC Request and wait for the Response to
-  /// return it.
-  Future<Uint8List> rpcCall(Uint8List encodedRequest) async => _rpcCall(encodedRequest);
+  /// This method sends an encoded RPC Request and wait for the encoded Response
+  /// then return it.
+  Future<Uint8List> rpcCall(Uint8List encodedRequest) async =>
+      _rpcCall(encodedRequest);
 
-  /// This method tests the web channel upon connection request by sending a
-  /// kRPC server status request.
-  Future<void> checkServerStatus() async {
-    await rpcCall(ProtobufHandler.encodeStatusRequest());
-  }
-
-  Future<void> _connectRPC() async {
+  Future<void> _connectRpcUsingWebSocket() async {
     status = KrpcClientStatus.connecting;
     print('Connecting to RPC WebSocket: $websocketRpcUrl');
     rpcChannel = IOWebSocketChannel.connect(websocketRpcUrl);
@@ -70,8 +67,21 @@ class KrpcClient {
       throw KrpcConnectionError('Could not connect! '
           'Check ip and rpcPort values (we used $ip and $rpcPort)');
     }).asBroadcastStream();
-    await checkServerStatus();
-    status = KrpcClientStatus.connected;
+    try {
+      await _checkServerStatus();
+      status = KrpcClientStatus.connected;
+    } on Exception {
+      print('Connecting to RPC failed.');
+      rethrow;
+    }
+  }
+
+  Future<void> _connectRpcUsingTcp() => throw UnimplementedError();
+
+  // This method tests the web channel upon connection request by sending a
+  // kRPC server status request.
+  Future<void> _checkServerStatus() async {
+    await rpcCall(ProtobufHandler.encodeStatusRequest());
   }
 
   Future<void> _connectStream(String clientId) async {
