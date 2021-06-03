@@ -5,7 +5,7 @@ import 'package:krpc_dart/krpc_dart.dart';
 /// configuration.
 void main() async {
   var client = KrpcClient(
-      ip: '192.168.0.149',
+      ip: '192.168.0.150',
       rpcPort: 50000,
       streamPort: 50001,
       clientName: 'client');
@@ -22,8 +22,7 @@ void main() async {
   try {
     // 1. Encode the Request to get the server status and send it
     final rawResponse = await client.rpcCall(ProtobufHandler.encodeRequest([
-      ProtobufHandler.procedureCallBuilder(
-          service: 'KRPC', procedure: 'GetStatus')
+      ProtobufHandler.procedureCallBuilder('KRPC','GetStatus')
     ]));
 
     // 2. Decode the Response to get the Status information as JSON

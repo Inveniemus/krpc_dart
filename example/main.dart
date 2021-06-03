@@ -8,7 +8,7 @@ import 'package:krpc_dart/api/krpc.dart';
 /// features.
 void main() async {
 
-  final client = KrpcClient(ip: 'localhost');
+  final client = KrpcClient(ip: '192.168.0.150');
   try {
     await client.connectRPC();
   } on Exception catch (e) {

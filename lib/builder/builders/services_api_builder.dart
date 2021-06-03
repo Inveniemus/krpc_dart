@@ -2,16 +2,16 @@ import 'dart:io';
 
 import 'package:mustache_template/mustache.dart';
 
-import '../../lib/proto/krpc.pb.dart' show Services;
+import '../../proto/krpc.pb.dart' show Services;
 import '../utils.dart';
 
 class ServicesAPIBuilder {
   final Services services;
-  Template template;
+  late Template template;
 
   ServicesAPIBuilder(this.services){
     template =
-        Template(File('./bin/builders/services_api_template').readAsStringSync());
+        Template(File('./lib/builder/builders/services_api_template').readAsStringSync());
   }
 
   @override

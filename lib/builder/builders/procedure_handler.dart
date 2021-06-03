@@ -1,4 +1,4 @@
-import '../../lib/proto/krpc.pb.dart' show Procedure;
+import '../../proto/krpc.pb.dart' show Procedure;
 import '../utils.dart';
 
 /// This class handles provided kRPC data to get its nature
@@ -9,9 +9,9 @@ class ProcedureHandler {
     _analyze();
   }
 
-  ProcedureNature nature;
-  String _krpcName;
-  String className;
+  ProcedureNature? nature;
+  String? _krpcName;
+  String? className;
 
   String get krpcName {
     if (_krpcName == null) {
@@ -19,7 +19,7 @@ class ProcedureHandler {
           'Builder: a Procedure could not be identified by its name:\n'
           ' ${procedure.name}');
     } else {
-      return _krpcName;
+      return _krpcName!;
     }
   }
 
@@ -52,12 +52,12 @@ class ProcedureHandler {
     RegExp classGetterRE = RegExp(r"(\S+)_get_(\S+)");
     RegExp classSetterRE = RegExp(r"(\S+)_set_(\S+)");
 
-    Match serviceGetterM = serviceGetterRE.firstMatch(procedure.name);
-    Match serviceSetterM = serviceSetterRE.firstMatch(procedure.name);
-    Match classMethodM = classMethodRE.firstMatch(procedure.name);
-    Match classStaticMethodM = classStaticMethodRE.firstMatch(procedure.name);
-    Match classGetterM = classGetterRE.firstMatch(procedure.name);
-    Match classSetterM = classSetterRE.firstMatch(procedure.name);
+    Match? serviceGetterM = serviceGetterRE.firstMatch(procedure.name);
+    Match? serviceSetterM = serviceSetterRE.firstMatch(procedure.name);
+    Match? classMethodM = classMethodRE.firstMatch(procedure.name);
+    Match? classStaticMethodM = classStaticMethodRE.firstMatch(procedure.name);
+    Match? classGetterM = classGetterRE.firstMatch(procedure.name);
+    Match? classSetterM = classSetterRE.firstMatch(procedure.name);
 
     if (classStaticMethodM != null) {
       nature = ProcedureNature.classStaticMethod;

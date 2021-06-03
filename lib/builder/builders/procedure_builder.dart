@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:mustache_template/mustache.dart';
 
-import '../../lib/proto/krpc.pb.dart' show Procedure;
+import '../../proto/krpc.pb.dart' show Procedure;
 import '../utils.dart';
 import 'parameters_builder.dart';
 import 'procedure_handler.dart';
@@ -23,7 +23,7 @@ class ProcedureBuilder {
 
     // DEBUG STUFF - REMOVE
     Template debugTemplate = Template(
-        File('./bin/builders/procedure_template_debug').readAsStringSync());
+        File('./lib/builder/builders/procedure_template_debug').readAsStringSync());
     Map<String, dynamic> debugData = {};
     debugData['procedure_name'] = procedure.name;
     debugData['return_type'] = typeAnalyzer(procedure.returnType);
@@ -37,13 +37,13 @@ class ProcedureBuilder {
 
     if (handler.isGetter) {
       template = Template(
-          File('./bin/builders/procedure_template_getter').readAsStringSync());
+          File('./lib/builder/builders/procedure_template_getter').readAsStringSync());
     } else if (handler.isSetter) {
       template = Template(
-          File('./bin/builders/procedure_template_setter').readAsStringSync());
+          File('./lib/builder/builders/procedure_template_setter').readAsStringSync());
     } else {
       template = Template(
-          File('./bin/builders/procedure_template').readAsStringSync());
+          File('./lib/builder/builders/procedure_template').readAsStringSync());
     }
 
     templateData['documentation'] = parseDoc(procedure.documentation);

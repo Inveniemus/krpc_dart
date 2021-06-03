@@ -4,5 +4,5 @@
         {{{procedure_metadata}}}
         'parameters': [{{{parameters_metadata}}}]
       });
-      return handler.decode(await client.rpcCall(handler.encode()));
+      return handler.decode(await client!.rpcCall(handler.encode()));
   }

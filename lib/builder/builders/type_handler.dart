@@ -1,10 +1,10 @@
-import '../../lib/proto/krpc.pb.dart' show Type, Type_TypeCode;
+import '../../proto/krpc.pb.dart' show Type, Type_TypeCode;
 
 /// This class handles a kRPC type, that may contain a collection of types,
 /// and/or be a collection itself.
 class TypeHandler {
   final Type type;
-  String dartType;
+  late String dartType;
   String metadataString = "{'code': ";
   TypeHandler(this.type) {
     _analyze();

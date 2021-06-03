@@ -22,8 +22,7 @@ Future<void> main() async {
     print('RPC call to get the services data...');
     final services_response = await client.rpcCall(
         ProtobufHandler.encodeRequest([
-      ProtobufHandler.procedureCallBuilder(
-          service: 'KRPC', procedure: 'GetServices')
+      ProtobufHandler.procedureCallBuilder('KRPC','GetServices')
     ]));
 
     print('Decoding received data...');
@@ -34,7 +33,7 @@ Future<void> main() async {
         ProtobufHandler.getProcedureResultData(servicesProcedureResult));
 
     print('Writing the JSON file...');
-    final outputFile = await File('./builder/services.krpc.json').create();
+    final outputFile = await File('./services_output/services.krpc.json').create();
     await outputFile.writeAsString(servicesString);
 
   } on KrpcConnectionError catch (error) {

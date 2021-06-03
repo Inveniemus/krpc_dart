@@ -2,9 +2,13 @@
 //  Generated code. Do not modify.
 //  source: krpc.proto
 //
-// @dart = 2.3
-// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields,deprecated_member_use_from_same_package
 
+import 'dart:core' as $core;
+import 'dart:convert' as $convert;
+import 'dart:typed_data' as $typed_data;
+@$core.Deprecated('Use connectionRequestDescriptor instead')
 const ConnectionRequest$json = const {
   '1': 'ConnectionRequest',
   '2': const [
@@ -15,6 +19,7 @@ const ConnectionRequest$json = const {
   '4': const [ConnectionRequest_Type$json],
 };
 
+@$core.Deprecated('Use connectionRequestDescriptor instead')
 const ConnectionRequest_Type$json = const {
   '1': 'Type',
   '2': const [
@@ -23,6 +28,9 @@ const ConnectionRequest_Type$json = const {
   ],
 };
 
+/// Descriptor for `ConnectionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List connectionRequestDescriptor = $convert.base64Decode('ChFDb25uZWN0aW9uUmVxdWVzdBI3CgR0eXBlGAEgASgOMiMua3JwYy5zY2hlbWEuQ29ubmVjdGlvblJlcXVlc3QuVHlwZVIEdHlwZRIfCgtjbGllbnRfbmFtZRgCIAEoCVIKY2xpZW50TmFtZRIrChFjbGllbnRfaWRlbnRpZmllchgDIAEoDFIQY2xpZW50SWRlbnRpZmllciIbCgRUeXBlEgcKA1JQQxAAEgoKBlNUUkVBTRAB');
+@$core.Deprecated('Use connectionResponseDescriptor instead')
 const ConnectionResponse$json = const {
   '1': 'ConnectionResponse',
   '2': const [
@@ -33,6 +41,7 @@ const ConnectionResponse$json = const {
   '4': const [ConnectionResponse_Status$json],
 };
 
+@$core.Deprecated('Use connectionResponseDescriptor instead')
 const ConnectionResponse_Status$json = const {
   '1': 'Status',
   '2': const [
@@ -43,6 +52,9 @@ const ConnectionResponse_Status$json = const {
   ],
 };
 
+/// Descriptor for `ConnectionResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List connectionResponseDescriptor = $convert.base64Decode('ChJDb25uZWN0aW9uUmVzcG9uc2USPgoGc3RhdHVzGAEgASgOMiYua3JwYy5zY2hlbWEuQ29ubmVjdGlvblJlc3BvbnNlLlN0YXR1c1IGc3RhdHVzEhgKB21lc3NhZ2UYAiABKAlSB21lc3NhZ2USKwoRY2xpZW50X2lkZW50aWZpZXIYAyABKAxSEGNsaWVudElkZW50aWZpZXIiRAoGU3RhdHVzEgYKAk9LEAASFQoRTUFMRk9STUVEX01FU1NBR0UQARILCgdUSU1FT1VUEAISDgoKV1JPTkdfVFlQRRAD');
+@$core.Deprecated('Use requestDescriptor instead')
 const Request$json = const {
   '1': 'Request',
   '2': const [
@@ -50,6 +62,9 @@ const Request$json = const {
   ],
 };
 
+/// Descriptor for `Request`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List requestDescriptor = $convert.base64Decode('CgdSZXF1ZXN0EjAKBWNhbGxzGAEgAygLMhoua3JwYy5zY2hlbWEuUHJvY2VkdXJlQ2FsbFIFY2FsbHM=');
+@$core.Deprecated('Use procedureCallDescriptor instead')
 const ProcedureCall$json = const {
   '1': 'ProcedureCall',
   '2': const [
@@ -61,6 +76,9 @@ const ProcedureCall$json = const {
   ],
 };
 
+/// Descriptor for `ProcedureCall`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List procedureCallDescriptor = $convert.base64Decode('Cg1Qcm9jZWR1cmVDYWxsEhgKB3NlcnZpY2UYASABKAlSB3NlcnZpY2USHAoJcHJvY2VkdXJlGAIgASgJUglwcm9jZWR1cmUSHQoKc2VydmljZV9pZBgEIAEoDVIJc2VydmljZUlkEiEKDHByb2NlZHVyZV9pZBgFIAEoDVILcHJvY2VkdXJlSWQSMwoJYXJndW1lbnRzGAMgAygLMhUua3JwYy5zY2hlbWEuQXJndW1lbnRSCWFyZ3VtZW50cw==');
+@$core.Deprecated('Use argumentDescriptor instead')
 const Argument$json = const {
   '1': 'Argument',
   '2': const [
@@ -69,6 +87,9 @@ const Argument$json = const {
   ],
 };
 
+/// Descriptor for `Argument`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List argumentDescriptor = $convert.base64Decode('CghBcmd1bWVudBIaCghwb3NpdGlvbhgBIAEoDVIIcG9zaXRpb24SFAoFdmFsdWUYAiABKAxSBXZhbHVl');
+@$core.Deprecated('Use responseDescriptor instead')
 const Response$json = const {
   '1': 'Response',
   '2': const [
@@ -77,6 +98,9 @@ const Response$json = const {
   ],
 };
 
+/// Descriptor for `Response`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List responseDescriptor = $convert.base64Decode('CghSZXNwb25zZRIoCgVlcnJvchgBIAEoCzISLmtycGMuc2NoZW1hLkVycm9yUgVlcnJvchI2CgdyZXN1bHRzGAIgAygLMhwua3JwYy5zY2hlbWEuUHJvY2VkdXJlUmVzdWx0UgdyZXN1bHRz');
+@$core.Deprecated('Use procedureResultDescriptor instead')
 const ProcedureResult$json = const {
   '1': 'ProcedureResult',
   '2': const [
@@ -85,6 +109,9 @@ const ProcedureResult$json = const {
   ],
 };
 
+/// Descriptor for `ProcedureResult`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List procedureResultDescriptor = $convert.base64Decode('Cg9Qcm9jZWR1cmVSZXN1bHQSKAoFZXJyb3IYASABKAsyEi5rcnBjLnNjaGVtYS5FcnJvclIFZXJyb3ISFAoFdmFsdWUYAiABKAxSBXZhbHVl');
+@$core.Deprecated('Use errorDescriptor instead')
 const Error$json = const {
   '1': 'Error',
   '2': const [
@@ -95,6 +122,9 @@ const Error$json = const {
   ],
 };
 
+/// Descriptor for `Error`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List errorDescriptor = $convert.base64Decode('CgVFcnJvchIYCgdzZXJ2aWNlGAEgASgJUgdzZXJ2aWNlEhIKBG5hbWUYAiABKAlSBG5hbWUSIAoLZGVzY3JpcHRpb24YAyABKAlSC2Rlc2NyaXB0aW9uEh8KC3N0YWNrX3RyYWNlGAQgASgJUgpzdGFja1RyYWNl');
+@$core.Deprecated('Use streamUpdateDescriptor instead')
 const StreamUpdate$json = const {
   '1': 'StreamUpdate',
   '2': const [
@@ -102,6 +132,9 @@ const StreamUpdate$json = const {
   ],
 };
 
+/// Descriptor for `StreamUpdate`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List streamUpdateDescriptor = $convert.base64Decode('CgxTdHJlYW1VcGRhdGUSMwoHcmVzdWx0cxgBIAMoCzIZLmtycGMuc2NoZW1hLlN0cmVhbVJlc3VsdFIHcmVzdWx0cw==');
+@$core.Deprecated('Use streamResultDescriptor instead')
 const StreamResult$json = const {
   '1': 'StreamResult',
   '2': const [
@@ -110,6 +143,9 @@ const StreamResult$json = const {
   ],
 };
 
+/// Descriptor for `StreamResult`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List streamResultDescriptor = $convert.base64Decode('CgxTdHJlYW1SZXN1bHQSDgoCaWQYASABKARSAmlkEjQKBnJlc3VsdBgCIAEoCzIcLmtycGMuc2NoZW1hLlByb2NlZHVyZVJlc3VsdFIGcmVzdWx0');
+@$core.Deprecated('Use servicesDescriptor instead')
 const Services$json = const {
   '1': 'Services',
   '2': const [
@@ -117,6 +153,9 @@ const Services$json = const {
   ],
 };
 
+/// Descriptor for `Services`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List servicesDescriptor = $convert.base64Decode('CghTZXJ2aWNlcxIwCghzZXJ2aWNlcxgBIAMoCzIULmtycGMuc2NoZW1hLlNlcnZpY2VSCHNlcnZpY2Vz');
+@$core.Deprecated('Use serviceDescriptor instead')
 const Service$json = const {
   '1': 'Service',
   '2': const [
@@ -129,6 +168,9 @@ const Service$json = const {
   ],
 };
 
+/// Descriptor for `Service`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List serviceDescriptor = $convert.base64Decode('CgdTZXJ2aWNlEhIKBG5hbWUYASABKAlSBG5hbWUSNgoKcHJvY2VkdXJlcxgCIAMoCzIWLmtycGMuc2NoZW1hLlByb2NlZHVyZVIKcHJvY2VkdXJlcxIsCgdjbGFzc2VzGAMgAygLMhIua3JwYy5zY2hlbWEuQ2xhc3NSB2NsYXNzZXMSPAoMZW51bWVyYXRpb25zGAQgAygLMhgua3JwYy5zY2hlbWEuRW51bWVyYXRpb25SDGVudW1lcmF0aW9ucxI2CgpleGNlcHRpb25zGAUgAygLMhYua3JwYy5zY2hlbWEuRXhjZXB0aW9uUgpleGNlcHRpb25zEiQKDWRvY3VtZW50YXRpb24YBiABKAlSDWRvY3VtZW50YXRpb24=');
+@$core.Deprecated('Use procedureDescriptor instead')
 const Procedure$json = const {
   '1': 'Procedure',
   '2': const [
@@ -142,6 +184,7 @@ const Procedure$json = const {
   '4': const [Procedure_GameScene$json],
 };
 
+@$core.Deprecated('Use procedureDescriptor instead')
 const Procedure_GameScene$json = const {
   '1': 'GameScene',
   '2': const [
@@ -154,6 +197,9 @@ const Procedure_GameScene$json = const {
   ],
 };
 
+/// Descriptor for `Procedure`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List procedureDescriptor = $convert.base64Decode('CglQcm9jZWR1cmUSEgoEbmFtZRgBIAEoCVIEbmFtZRI2CgpwYXJhbWV0ZXJzGAIgAygLMhYua3JwYy5zY2hlbWEuUGFyYW1ldGVyUgpwYXJhbWV0ZXJzEjIKC3JldHVybl90eXBlGAMgASgLMhEua3JwYy5zY2hlbWEuVHlwZVIKcmV0dXJuVHlwZRIsChJyZXR1cm5faXNfbnVsbGFibGUYBCABKAhSEHJldHVybklzTnVsbGFibGUSQQoLZ2FtZV9zY2VuZXMYBiADKA4yIC5rcnBjLnNjaGVtYS5Qcm9jZWR1cmUuR2FtZVNjZW5lUgpnYW1lU2NlbmVzEiQKDWRvY3VtZW50YXRpb24YBSABKAlSDWRvY3VtZW50YXRpb24idAoJR2FtZVNjZW5lEhAKDFNQQUNFX0NFTlRFUhAAEgoKBkZMSUdIVBABEhQKEFRSQUNLSU5HX1NUQVRJT04QAhIOCgpFRElUT1JfVkFCEAMSDgoKRURJVE9SX1NQSBAEEhMKD01JU1NJT05fQlVJTERFUhAF');
+@$core.Deprecated('Use parameterDescriptor instead')
 const Parameter$json = const {
   '1': 'Parameter',
   '2': const [
@@ -163,6 +209,9 @@ const Parameter$json = const {
   ],
 };
 
+/// Descriptor for `Parameter`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List parameterDescriptor = $convert.base64Decode('CglQYXJhbWV0ZXISEgoEbmFtZRgBIAEoCVIEbmFtZRIlCgR0eXBlGAIgASgLMhEua3JwYy5zY2hlbWEuVHlwZVIEdHlwZRIjCg1kZWZhdWx0X3ZhbHVlGAMgASgMUgxkZWZhdWx0VmFsdWU=');
+@$core.Deprecated('Use classDescriptor instead')
 const Class$json = const {
   '1': 'Class',
   '2': const [
@@ -171,6 +220,9 @@ const Class$json = const {
   ],
 };
 
+/// Descriptor for `Class`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List classDescriptor = $convert.base64Decode('CgVDbGFzcxISCgRuYW1lGAEgASgJUgRuYW1lEiQKDWRvY3VtZW50YXRpb24YAiABKAlSDWRvY3VtZW50YXRpb24=');
+@$core.Deprecated('Use enumerationDescriptor instead')
 const Enumeration$json = const {
   '1': 'Enumeration',
   '2': const [
@@ -180,6 +232,9 @@ const Enumeration$json = const {
   ],
 };
 
+/// Descriptor for `Enumeration`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List enumerationDescriptor = $convert.base64Decode('CgtFbnVtZXJhdGlvbhISCgRuYW1lGAEgASgJUgRuYW1lEjUKBnZhbHVlcxgCIAMoCzIdLmtycGMuc2NoZW1hLkVudW1lcmF0aW9uVmFsdWVSBnZhbHVlcxIkCg1kb2N1bWVudGF0aW9uGAMgASgJUg1kb2N1bWVudGF0aW9u');
+@$core.Deprecated('Use enumerationValueDescriptor instead')
 const EnumerationValue$json = const {
   '1': 'EnumerationValue',
   '2': const [
@@ -189,6 +244,9 @@ const EnumerationValue$json = const {
   ],
 };
 
+/// Descriptor for `EnumerationValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List enumerationValueDescriptor = $convert.base64Decode('ChBFbnVtZXJhdGlvblZhbHVlEhIKBG5hbWUYASABKAlSBG5hbWUSFAoFdmFsdWUYAiABKAVSBXZhbHVlEiQKDWRvY3VtZW50YXRpb24YAyABKAlSDWRvY3VtZW50YXRpb24=');
+@$core.Deprecated('Use exceptionDescriptor instead')
 const Exception$json = const {
   '1': 'Exception',
   '2': const [
@@ -197,6 +255,9 @@ const Exception$json = const {
   ],
 };
 
+/// Descriptor for `Exception`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List exceptionDescriptor = $convert.base64Decode('CglFeGNlcHRpb24SEgoEbmFtZRgBIAEoCVIEbmFtZRIkCg1kb2N1bWVudGF0aW9uGAIgASgJUg1kb2N1bWVudGF0aW9u');
+@$core.Deprecated('Use typeDescriptor instead')
 const Type$json = const {
   '1': 'Type',
   '2': const [
@@ -208,6 +269,7 @@ const Type$json = const {
   '4': const [Type_TypeCode$json],
 };
 
+@$core.Deprecated('Use typeDescriptor instead')
 const Type_TypeCode$json = const {
   '1': 'TypeCode',
   '2': const [
@@ -235,6 +297,9 @@ const Type_TypeCode$json = const {
   ],
 };
 
+/// Descriptor for `Type`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List typeDescriptor = $convert.base64Decode('CgRUeXBlEi4KBGNvZGUYASABKA4yGi5rcnBjLnNjaGVtYS5UeXBlLlR5cGVDb2RlUgRjb2RlEhgKB3NlcnZpY2UYAiABKAlSB3NlcnZpY2USEgoEbmFtZRgDIAEoCVIEbmFtZRInCgV0eXBlcxgEIAMoCzIRLmtycGMuc2NoZW1hLlR5cGVSBXR5cGVzIpQCCghUeXBlQ29kZRIICgROT05FEAASCgoGRE9VQkxFEAESCQoFRkxPQVQQAhIKCgZTSU5UMzIQAxIKCgZTSU5UNjQQBBIKCgZVSU5UMzIQBRIKCgZVSU5UNjQQBhIICgRCT09MEAcSCgoGU1RSSU5HEAgSCQoFQllURVMQCRIJCgVDTEFTUxBkEg8KC0VOVU1FUkFUSU9OEGUSCgoFRVZFTlQQyAESEwoOUFJPQ0VEVVJFX0NBTEwQyQESCwoGU1RSRUFNEMoBEgsKBlNUQVRVUxDLARINCghTRVJWSUNFUxDMARIKCgVUVVBMRRCsAhIJCgRMSVNUEK0CEggKA1NFVBCuAhIPCgpESUNUSU9OQVJZEK8C');
+@$core.Deprecated('Use tupleDescriptor instead')
 const Tuple$json = const {
   '1': 'Tuple',
   '2': const [
@@ -242,6 +307,9 @@ const Tuple$json = const {
   ],
 };
 
+/// Descriptor for `Tuple`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List tupleDescriptor = $convert.base64Decode('CgVUdXBsZRIUCgVpdGVtcxgBIAMoDFIFaXRlbXM=');
+@$core.Deprecated('Use list_Descriptor instead')
 const List_$json = const {
   '1': 'List',
   '2': const [
@@ -249,6 +317,9 @@ const List_$json = const {
   ],
 };
 
+/// Descriptor for `List`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List list_Descriptor = $convert.base64Decode('CgRMaXN0EhQKBWl0ZW1zGAEgAygMUgVpdGVtcw==');
+@$core.Deprecated('Use setDescriptor instead')
 const Set$json = const {
   '1': 'Set',
   '2': const [
@@ -256,6 +327,9 @@ const Set$json = const {
   ],
 };
 
+/// Descriptor for `Set`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setDescriptor = $convert.base64Decode('CgNTZXQSFAoFaXRlbXMYASADKAxSBWl0ZW1z');
+@$core.Deprecated('Use dictionaryDescriptor instead')
 const Dictionary$json = const {
   '1': 'Dictionary',
   '2': const [
@@ -263,6 +337,9 @@ const Dictionary$json = const {
   ],
 };
 
+/// Descriptor for `Dictionary`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dictionaryDescriptor = $convert.base64Decode('CgpEaWN0aW9uYXJ5EjYKB2VudHJpZXMYASADKAsyHC5rcnBjLnNjaGVtYS5EaWN0aW9uYXJ5RW50cnlSB2VudHJpZXM=');
+@$core.Deprecated('Use dictionaryEntryDescriptor instead')
 const DictionaryEntry$json = const {
   '1': 'DictionaryEntry',
   '2': const [
@@ -271,6 +348,9 @@ const DictionaryEntry$json = const {
   ],
 };
 
+/// Descriptor for `DictionaryEntry`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dictionaryEntryDescriptor = $convert.base64Decode('Cg9EaWN0aW9uYXJ5RW50cnkSEAoDa2V5GAEgASgMUgNrZXkSFAoFdmFsdWUYAiABKAxSBXZhbHVl');
+@$core.Deprecated('Use streamDescriptor instead')
 const Stream$json = const {
   '1': 'Stream',
   '2': const [
@@ -278,6 +358,9 @@ const Stream$json = const {
   ],
 };
 
+/// Descriptor for `Stream`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List streamDescriptor = $convert.base64Decode('CgZTdHJlYW0SDgoCaWQYASABKARSAmlk');
+@$core.Deprecated('Use eventDescriptor instead')
 const Event$json = const {
   '1': 'Event',
   '2': const [
@@ -285,6 +368,9 @@ const Event$json = const {
   ],
 };
 
+/// Descriptor for `Event`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List eventDescriptor = $convert.base64Decode('CgVFdmVudBIrCgZzdHJlYW0YASABKAsyEy5rcnBjLnNjaGVtYS5TdHJlYW1SBnN0cmVhbQ==');
+@$core.Deprecated('Use statusDescriptor instead')
 const Status$json = const {
   '1': 'Status',
   '2': const [
@@ -310,6 +396,9 @@ const Status$json = const {
   ],
 };
 
+/// Descriptor for `Status`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List statusDescriptor = $convert.base64Decode('CgZTdGF0dXMSGAoHdmVyc2lvbhgBIAEoCVIHdmVyc2lvbhIdCgpieXRlc19yZWFkGAIgASgEUglieXRlc1JlYWQSIwoNYnl0ZXNfd3JpdHRlbhgDIAEoBFIMYnl0ZXNXcml0dGVuEiYKD2J5dGVzX3JlYWRfcmF0ZRgEIAEoAlINYnl0ZXNSZWFkUmF0ZRIsChJieXRlc193cml0dGVuX3JhdGUYBSABKAJSEGJ5dGVzV3JpdHRlblJhdGUSIwoNcnBjc19leGVjdXRlZBgGIAEoBFIMcnBjc0V4ZWN1dGVkEhkKCHJwY19yYXRlGAcgASgCUgdycGNSYXRlEisKEm9uZV9ycGNfcGVyX3VwZGF0ZRgIIAEoCFIPb25lUnBjUGVyVXBkYXRlEi0KE21heF90aW1lX3Blcl91cGRhdGUYCSABKA1SEG1heFRpbWVQZXJVcGRhdGUSMgoVYWRhcHRpdmVfcmF0ZV9jb250cm9sGAogASgIUhNhZGFwdGl2ZVJhdGVDb250cm9sEiMKDWJsb2NraW5nX3JlY3YYCyABKAhSDGJsb2NraW5nUmVjdhIhCgxyZWN2X3RpbWVvdXQYDCABKA1SC3JlY3ZUaW1lb3V0Ei0KE3RpbWVfcGVyX3JwY191cGRhdGUYDSABKAJSEHRpbWVQZXJScGNVcGRhdGUSNgoYcG9sbF90aW1lX3Blcl9ycGNfdXBkYXRlGA4gASgCUhRwb2xsVGltZVBlclJwY1VwZGF0ZRI2ChhleGVjX3RpbWVfcGVyX3JwY191cGRhdGUYDyABKAJSFGV4ZWNUaW1lUGVyUnBjVXBkYXRlEh8KC3N0cmVhbV9ycGNzGBAgASgNUgpzdHJlYW1ScGNzEjAKFHN0cmVhbV9ycGNzX2V4ZWN1dGVkGBEgASgEUhJzdHJlYW1ScGNzRXhlY3V0ZWQSJgoPc3RyZWFtX3JwY19yYXRlGBIgASgCUg1zdHJlYW1ScGNSYXRlEjMKFnRpbWVfcGVyX3N0cmVhbV91cGRhdGUYEyABKAJSE3RpbWVQZXJTdHJlYW1VcGRhdGU=');
+@$core.Deprecated('Use multiplexedRequestDescriptor instead')
 const MultiplexedRequest$json = const {
   '1': 'MultiplexedRequest',
   '2': const [
@@ -318,6 +407,9 @@ const MultiplexedRequest$json = const {
   ],
 };
 
+/// Descriptor for `MultiplexedRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List multiplexedRequestDescriptor = $convert.base64Decode('ChJNdWx0aXBsZXhlZFJlcXVlc3QSTQoSY29ubmVjdGlvbl9yZXF1ZXN0GAEgASgLMh4ua3JwYy5zY2hlbWEuQ29ubmVjdGlvblJlcXVlc3RSEWNvbm5lY3Rpb25SZXF1ZXN0Ei4KB3JlcXVlc3QYAiABKAsyFC5rcnBjLnNjaGVtYS5SZXF1ZXN0UgdyZXF1ZXN0');
+@$core.Deprecated('Use multiplexedResponseDescriptor instead')
 const MultiplexedResponse$json = const {
   '1': 'MultiplexedResponse',
   '2': const [
@@ -326,3 +418,5 @@ const MultiplexedResponse$json = const {
   ],
 };
 
+/// Descriptor for `MultiplexedResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List multiplexedResponseDescriptor = $convert.base64Decode('ChNNdWx0aXBsZXhlZFJlc3BvbnNlEjEKCHJlc3BvbnNlGAEgASgLMhUua3JwYy5zY2hlbWEuUmVzcG9uc2VSCHJlc3BvbnNlEj4KDXN0cmVhbV91cGRhdGUYAiABKAsyGS5rcnBjLnNjaGVtYS5TdHJlYW1VcGRhdGVSDHN0cmVhbVVwZGF0ZQ==');

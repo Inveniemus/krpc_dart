@@ -3,12 +3,12 @@ import 'dart:io';
 import 'builders/service_builder.dart';
 import 'builders/services_api_builder.dart';
 import 'utils.dart';
-import '../lib/proto/krpc.pb.dart' show Services, Service;
+import '../proto/krpc.pb.dart' show Services, Service;
 
 const librariesDirectory = './lib/api/';
 
 void main() {
-  final servicesData = File('./builder/services.krpc.json').readAsStringSync();
+  final servicesData = File('./services_output/services.krpc.json').readAsStringSync();
   final services = Services.fromJson(servicesData);
 
   buildServicesAPI(services);

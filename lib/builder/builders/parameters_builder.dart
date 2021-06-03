@@ -1,6 +1,4 @@
-import 'dart:typed_data';
-
-import '../../lib/proto/krpc.pb.dart';
+import '../../proto/krpc.pb.dart' show Parameter, Type;
 import 'type_handler.dart';
 
 class ParametersBuilder {

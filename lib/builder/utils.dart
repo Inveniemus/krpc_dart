@@ -2,7 +2,7 @@
 /// snake case, camel case, and so on.
 
 import 'package:recase/recase.dart';
-import '../lib/proto/krpc.pb.dart' show Type;
+import '../proto/krpc.pb.dart' show Type;
 
 /// For file names
 String toSnakeCase(String input) {
@@ -36,7 +36,7 @@ String parseDoc(String xmlDoc) {
 
   // Start with inline stuff
   var paramrefRegexp = RegExp(r'<paramref name="(\w+)" />');
-  docString = docString.replaceAllMapped(
+  docString = docString!.replaceAllMapped(
       paramrefRegexp,
           (match) => '[${match[1]}]'
   );
@@ -47,7 +47,7 @@ String parseDoc(String xmlDoc) {
   if (summaryMatch == null) {
     return '/// ERROR PARSING DOCUMENTATION BLOC\n';
   }
-  var summaryString = summaryMatch.group(1).trim();
+  var summaryString = summaryMatch.group(1)!.trim();
   var summaryStrings = summaryString.split(RegExp(r'[\n|\r|\r\n]'));
   summaryStrings.forEach((string) {
     string.trim();
@@ -59,7 +59,7 @@ String parseDoc(String xmlDoc) {
   if (matches.isNotEmpty) {
     matches.forEach((match) {
       var description = match[2];
-      description = description.replaceAllMapped(RegExp(r'[\n|\r|\r\n]'), (match) => ' ');
+      description = description!.replaceAllMapped(RegExp(r'[\n|\r|\r\n]'), (match) => ' ');
       result += '\n/// [${match[1]}] : ${description}';
     });
   }
@@ -68,7 +68,7 @@ String parseDoc(String xmlDoc) {
   var returnsMatch = returnsRegexp.firstMatch(docString);
   if (returnsMatch != null) {
     result += '\n/// Returns: ';
-    var returnsString = returnsMatch.group(1).trim();
+    var returnsString = returnsMatch.group(1)!.trim();
     var returnsStrings = returnsString.split(RegExp(r'[\n|\r|\r\n]'));
     returnsStrings.forEach((string) {
       string.trim();
@@ -80,7 +80,7 @@ String parseDoc(String xmlDoc) {
   var remarksMatch = remarksRegexp.firstMatch(docString);
   if (remarksMatch != null) {
     result += '\n/// Remarks: ';
-    var remarksString = remarksMatch.group(1).trim();
+    var remarksString = remarksMatch.group(1)!.trim();
     var remarksStrings = remarksString.split(RegExp(r'[\n|\r|\r\n]'));
     remarksStrings.forEach((string) {
       string.trim();

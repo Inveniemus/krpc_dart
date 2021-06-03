@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import '../../lib/proto/krpc.pb.dart';
+import '../../proto/krpc.pb.dart' show Service;
 import 'package:mustache_template/mustache_template.dart';
 
 import '../utils.dart';
@@ -10,11 +10,11 @@ import 'procedure_handler.dart';
 /// Builds the Service library file content, accessed by a call to toString().
 class ServiceBuilder {
   final Service service;
-  Template template;
+  late Template template;
 
   ServiceBuilder(this.service) {
     template =
-        Template(File('./bin/builders/service_template').readAsStringSync());
+        Template(File('./lib/builder/builders/service_template').readAsStringSync());
   }
 
   String _build() {

@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data' show Uint8List;
 
+import 'package:krpc_dart/api/services_api.dart';
 import 'package:krpc_dart/krpc_dart.dart';
-import 'package:meta/meta.dart';
 import 'package:protobuf/protobuf.dart';
 
-import '../api/services_api.dart';
 import '../proto/krpc.pb.dart'
     show Request, ProcedureCall, Services, Response, ProcedureResult, Status;
 import 'codecs/argument_encoder.dart';
@@ -48,7 +47,7 @@ class ProtobufHandler {
 
   /// Hard-coded Request used by the builder, while the API may not already be
   /// available.
-  static Uint8List encodeStatusRequest() {
+  static Uint8List getEncodedStatusRequest() {
     var request = Request()
       ..calls.add(ProcedureCall()
         ..service = 'KRPC'
@@ -70,8 +69,7 @@ class ProtobufHandler {
     return request.writeToBuffer();
   }
 
-  static ProcedureCall procedureCallBuilder(
-      {@required String service, @required String procedure}) {
+  static ProcedureCall procedureCallBuilder(String service, String procedure) {
     final procedureCall = ProcedureCall();
     procedureCall.service = service;
     procedureCall.procedure = procedure;
@@ -98,7 +96,7 @@ class ProtobufHandler {
   }
 
   static dynamic handleReturnData(
-      Map<String, dynamic> returnTypeData, Uint8List data) {
+      Map<String, dynamic>? returnTypeData, Uint8List data) {
     if (returnTypeData == null) return;
 
     print('Handling: $returnTypeData - $data');
@@ -108,79 +106,57 @@ class ProtobufHandler {
     switch (returnTypeData['code']) {
       case 'NONE':
         return null;
-        break;
       case 'DOUBLE':
         return buffer.readDouble();
-        break;
       case 'FLOAT':
         return buffer.readFloat();
-        break;
       case 'SINT32':
         return buffer.readFixed32();
-        break;
       case 'SINT64':
         return buffer.readFixed64();
-        break;
       case 'UINT32':
         return buffer.readUint32();
-        break;
       case 'UINT64':
         return buffer.readUint64();
-        break;
       case 'BOOL':
         return buffer.readBool();
-        break;
       case 'STRING':
         return buffer.readString();
-        break;
       case 'BYTES':
         return buffer.readBytes();
-        break;
       case 'CLASS':
         return getClass(
             returnTypeData['service'], returnTypeData['name'], data);
-        break;
       case 'ENUMERATION':
         final index = (data[0] / 2).round(); // <= For whatever reason...
         return getEnum(
             returnTypeData['service'], returnTypeData['name'], index);
-        break;
       case 'EVENT':
         // todo
         throw UnimplementedError();
-        break;
       case 'PROCEDURE_CALL':
         // todo
         throw UnimplementedError();
-        break;
       case 'STREAM':
         // todo
         throw UnimplementedError();
-        break;
       case 'STATUS':
         return Status.fromBuffer(data);
-        break;
       case 'SERVICES':
         return Services.fromBuffer(data);
-        break;
       case 'TUPLE':
         // todo
         throw UnimplementedError();
-        break;
       case 'LIST':
         // todo
         throw UnimplementedError();
-        break;
       case 'SET':
         // todo
         throw UnimplementedError();
-        break;
       case 'DICTIONARY':
         // todo
         throw UnimplementedError();
-        break;
     }
-
     return null;
   }
 }
