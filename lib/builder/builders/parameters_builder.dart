@@ -25,6 +25,7 @@ class ParametersBuilder {
     for (int i = 0; i < parameters.length; i++) {
       String nameValue = parameters[i].name;
       if (nameValue == 'this') nameValue = 'ref';
+      if (parameters[i].type.code.toString() == 'ENUMERATION') nameValue = nameValue + '.index';
       result += "{'position': $i, 'type_code': '${parameters[i].type.code}', 'type_name': '${parameters[i].type.name}', 'name': $nameValue}, ";
     }
     return result;

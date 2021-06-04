@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:typed_data' show Uint8List;
 import '../src/krpc_client.dart' show KrpcClient;
 import '../src/protobuf_handler.dart' show ProtobufHandler;
 {{#imports}}
@@ -52,7 +52,6 @@ dynamic get{{{library_name}}}Enum(String enumName, int index) {
     {{#enumerations}}
     case '{{{enumeration_name}}}':
       return {{{enumeration_name}}}.values[index];
-      break;
     {{/enumerations}}
     default:
       throw Exception('Unknown KRPC enumeration $enumName');

@@ -8,7 +8,6 @@ dynamic getClass(String service, String className, Uint8List reference) {
     {{#services}}
     case '{{{service_name}}}':
       return get{{{service_name}}}Class(className, reference);
-      break;
     {{/services}}
     default:
       throw Exception('in getClass, could not find the service!');
@@ -20,7 +19,6 @@ dynamic getEnum(String service, String enumName, int index) {
     {{#services}}
     case '{{{service_name}}}':
       return get{{{service_name}}}Enum(enumName, index);
-      break;
     {{/services}}
     default:
       throw Exception('in getEnum, could not find the service!');

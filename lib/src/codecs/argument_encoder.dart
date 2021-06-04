@@ -1,6 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:protobuf/protobuf.dart';
 
-import '../../proto/krpc.pb.dart' show Argument;
+import '../../proto/krpc.pb.dart' show Argument, EnumerationValue;
 
 class ArgumentEncoder {
   final Map<String, dynamic> parameterMetaData;
@@ -45,22 +47,23 @@ class ArgumentEncoder {
         writer.writeField(1, PbFieldType.OY, parameterMetaData['name']);
         break;
       case 'CLASS':
-        writer.writeField(1, PbFieldType.OY, parameterMetaData['name']);
+        dynamic data = parameterMetaData['name'];
+        if (data is! Uint8List) data = data.ref;
+        writer.writeField(1, PbFieldType.OY, data);
         break;
       case 'ENUMERATION':
-      // todo
-        throw UnimplementedError();
+        writer.writeField(1, PbFieldType.OS3, parameterMetaData['name']);
         break;
       case 'EVENT':
-      // todo
+        // todo
         throw UnimplementedError();
         break;
       case 'PROCEDURE_CALL':
-      // todo
+        // todo
         throw UnimplementedError();
         break;
       case 'STREAM':
-      // todo
+        // todo
         throw UnimplementedError();
         break;
       case 'STATUS':
@@ -70,15 +73,15 @@ class ArgumentEncoder {
         // NOT RELEVANT
         break;
       case 'TUPLE':
-      // todo
+        // todo
         throw UnimplementedError();
         break;
       case 'LIST':
-      // todo
+        // todo
         throw UnimplementedError();
         break;
       case 'SET':
-      // todo
+        // todo
         throw UnimplementedError();
         break;
       case 'DICTIONARY':
