@@ -1,9 +1,9 @@
-import 'dart:typed_data';
+import 'package:fixnum/fixnum.dart' show Int64;
 {{#imports}}
 import '{{{filename}}}';
 {{/imports}}
 
-dynamic getClass(String service, String className, Uint8List reference) {
+dynamic getClass(String service, String className, Int64 reference) {
   switch(service) {
     {{#services}}
     case '{{{service_name}}}':

@@ -1,3 +1,4 @@
+import 'package:fixnum/fixnum.dart' show Int64;
 import 'dart:typed_data' show Uint8List;
 import '../src/krpc_client.dart' show KrpcClient;
 import '../src/protobuf_handler.dart' show ProtobufHandler;
@@ -20,7 +21,7 @@ class {{{library_name}}} {
 }
 
 // Service classes builder:
-dynamic get{{{library_name}}}Class(String className, Uint8List reference) {
+dynamic get{{{library_name}}}Class(String className, Int64 reference) {
   switch(className) {
     {{#classes}}
     case '{{class_name}}':
@@ -35,7 +36,7 @@ dynamic get{{{library_name}}}Class(String className, Uint8List reference) {
 {{#classes}}
 {{{class_documentation}}}
 class {{class_name}} {
-    final Uint8List ref;
+    final Int64 ref;
     {{class_name}}(this.ref);
 
 {{#class_procedures}}

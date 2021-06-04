@@ -40,9 +40,6 @@ void main() async {
   final Control control = await vessel.control;
   final autoPilot = await vessel.autoPilot;
   print('${control.ref} - ${autoPilot.ref}');
-  final newVessel = Vessel(control.ref);
-
-  await spaceCenterService.set_activeVessel(newVessel);
 
   print(await control.state);
   print(await autoPilot.sas);

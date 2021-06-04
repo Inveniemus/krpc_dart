@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
 
 import '../../proto/krpc.pb.dart' show Argument, EnumerationValue;
@@ -47,9 +48,9 @@ class ArgumentEncoder {
         writer.writeField(1, PbFieldType.OY, parameterMetaData['name']);
         break;
       case 'CLASS':
-        dynamic data = parameterMetaData['name'];
-        if (data is! Uint8List) data = data.ref;
-        writer.writeField(1, PbFieldType.OY, data);
+        dynamic ref = parameterMetaData['name'];
+        if (ref is! Int64) ref = ref.ref;
+        writer.writeField(1, PbFieldType.OU6, ref);
         break;
       case 'ENUMERATION':
         writer.writeField(1, PbFieldType.OS3, parameterMetaData['name']);

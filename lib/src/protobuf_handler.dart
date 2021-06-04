@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data' show Uint8List;
+import 'package:fixnum/fixnum.dart' show Int64;
 
 import 'package:krpc_dart/api/services_api.dart';
 import 'package:krpc_dart/krpc_dart.dart';
@@ -125,8 +126,9 @@ class ProtobufHandler {
       case 'BYTES':
         return buffer.readBytes();
       case 'CLASS':
-        return getClass(
-            returnTypeData['service'], returnTypeData['name'], data);
+        final Int64 reference = buffer.readUint64().toInt64();
+        return buildClass(
+            returnTypeData['service'], returnTypeData['name'], reference);
       case 'ENUMERATION':
         final index = (data[0] / 2).round(); // <= For whatever reason...
         return getEnum(
