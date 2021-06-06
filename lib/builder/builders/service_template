@@ -6,12 +6,12 @@ import '../src/protobuf_handler.dart' show ProtobufHandler;
 {{{import}}}
 {{/imports}}
 
-KrpcClient? client;
+KrpcClient? _client;
 
 // Service:
 {{{documentation}}}
 class {{{library_name}}} {
-  {{{library_name}}}(KrpcClient krpcClient) { client = krpcClient; }
+  {{{library_name}}}(KrpcClient krpcClient) { _client = krpcClient; }
 
   // Service Procedures
 {{#service_procedures}}

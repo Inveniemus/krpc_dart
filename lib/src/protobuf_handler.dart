@@ -127,7 +127,7 @@ class ProtobufHandler {
         return buffer.readBytes();
       case 'CLASS':
         final Int64 reference = buffer.readUint64().toInt64();
-        return buildClass(
+        return getClass(
             returnTypeData['service'], returnTypeData['name'], reference);
       case 'ENUMERATION':
         final index = (data[0] / 2).round(); // <= For whatever reason...
